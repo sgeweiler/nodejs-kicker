@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>nodejs-tablesoccer</title>
+</head>
+<body>
+<h1>Node.js – Tablesoccer</h1>
+<p id="goalCountOne"></p>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io.connect('http://localhost:2301');
+    socket.on('connect', function (data) {
+        socket.emit('join', 'Hello World from client');
+    })
+    socket.on('messages', function (data) {
+        alert(data);
+    })
+</script>
+</html>
