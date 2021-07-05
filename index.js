@@ -30,7 +30,6 @@ io.on('connect', function (client) {
         updateGoal();
     });
 
-
     client.on('reset', () => {
         goalCountOne = 0;
         goalCountTwo = 0;
