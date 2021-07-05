@@ -1,46 +1,80 @@
-const {app, io} = require('./app.js');
 const os = require('os'); // Operating System: Develop Environment on WIN10, Execute on LINUX
-const Gpio = require('onoff').Gpio;
-const MotionSensor = new Gpio(12, 'in', 'both');
-const PhotoDiode = new Gpio(21, 'in', 'both')
+const WIN = os.platform() === 'win32'
+const express = require('express');
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
-let countBall = 0;
-let countMotionOnDiode = 0;
 let lastGoal = 0;
 
-const { exec } = require('child_process')
+let goalCountOne = 0;
+let goalCountTwo = 0;
 
-if (os.platform() === 'linux'){
-    MotionSensor.watch(function (err, value) {
-        if (err)
-            return console.error(err);
-        if (value === 1)
-            countBall++
-        exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${countBall}`)
-        console.log(value, countBall)
+const {exec} = require('child_process')
+
+app.use(express.static(__dirname + '/node_modules'));
+app.get('/', function (req, res, next) {
+    res.sendFile(__dirname + '/index.html')
+});
+
+io.on('connect', function (client) {
+    console.log('Client connected...')
+
+    client.on('correctionOne', (amount) => {
+        goalCountOne += amount;
+        updateGoal();
     });
 
-    app.get('/test', (req, res) => {
-        res.send(`${countBall}`)
+    client.on('correctionTwo', (amount) => {
+        goalCountTwo += amount;
+        updateGoal();
     });
 
-    PhotoDiode.watch(function (err, value) {
+
+    client.on('reset', () => {
+        goalCountOne = 0;
+        goalCountTwo = 0;
+        updateGoal();
+    });
+
+    updateGoal();
+});
+
+server.listen(2301);
+
+function updateGoal() {
+    io.emit('goalCount', {goalCountOne, goalCountTwo});
+    /* Pfad muss auf den Ordner der TM1637 Bibliothek angepasst werden */
+    !WIN && exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${goalCountOne} ${goalCountTwo}`)
+    /* !WIN && exec(`python3 ${__dirname}/goal-count.py ${goalCountOne} ${goalCountTwo}`) */
+    /* ../raspberrypi-python-tm1637 */
+}
+
+if (os.platform() === 'linux') {
+    console.log('executing on raspberry')
+    const Gpio = require('onoff').Gpio;
+    const PhotoDiodeOne = new Gpio(21, 'in', 'both')
+    const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
+
+    PhotoDiodeOne.watch(function (err, value) {
         if (err)
             return console.error(err);
         if (value === 0 || Date.now() - 4000 < lastGoal)
             return
         lastGoal = Date.now()
-        countMotionOnDiode++
-        exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${countMotionOnDiode}`)
-        console.log(value, countMotionOnDiode)
+        goalCountOne++
+        updateGoal(goalCountOne);
     });
 
-
-    function unexportOnClose() {
-        MotionSensor.unexport();
-    }
+    PhotoDiodeTwo.watch(function (err, value) {
+        if (err)
+            return console.error(err);
+        if (value === 0 || Date.now() - 4000 < lastGoal)
+            return
+        lastGoal = Date.now()
+        goalCountTwo++
+        updateGoal(goalCountTwo);
+    });
 
     process.on('SIGINT', unexportOnClose);
-} else {
-    console.log('Developing on win32');
 }
