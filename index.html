@@ -7,7 +7,6 @@
 <body>
 <h1>Tischkicker Node.js Projekt</h1>
 
-<!-- Style auslagern -->
 <div style="float: left; padding: 100px; margin-top: 75px">
     <button id="plus1">+</button>
     <button id="minus1">-</button>
@@ -26,7 +25,8 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    const socket = io.connect('http://localhost:2301');
+    /* const socket = io.connect('http://localhost:2301') */
+    const socket = io();
     socket.on('connect', function (data) {
         socket.on('goalCount', function (data) {
             document.getElementById("GC-1").innerHTML = data.goalCountOne;
