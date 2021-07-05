@@ -76,5 +76,10 @@ if (os.platform() === 'linux') {
         updateGoal(goalCountTwo);
     });
 
+    function unexportOnClose() {
+        PhotoDiodeOne.unexport();
+        PhotoDiodeTwo.unexport();
+    }
+
     process.on('SIGINT', unexportOnClose);
 }
