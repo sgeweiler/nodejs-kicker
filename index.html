@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>nodejs-tablesoccer-project</title>
+</head>
+<body>
+<h1>Tischkicker Node.js Projekt</h1>
+
+<!-- Style auslagern -->
+<div style="float: left; padding: 100px; margin-top: 75px">
+    <button id="plus1">+</button>
+    <button id="minus1">-</button>
+</div>
+<div style="float: left; padding: 100px; font-size: 60px">
+    <p id="GC-1"></p>
+</div>
+<div style="float: left; padding: 100px; font-size: 60px">
+    <p id="GC-2"></p>
+</div>
+<div style="float: left; padding: 100px; margin-top: 75px">
+    <button id="plus2">+</button>
+    <button id="minus2">-</button>
+</div>
+<button id="reset">Spielstand zurücksetzen</button>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io.connect('http://localhost:2301');
+    socket.on('connect', function (data) {
+
+        socket.on('goalCount', function (data) {
+            document.getElementById("GC-1").innerHTML = data.goalCountOne;
+            document.getElementById("GC-2").innerHTML = data.goalCountTwo;
+        });
+    });
+
+    document.getElementById('plus1').addEventListener('click', () => socket.emit('correctionOne', 1));
+    document.getElementById('minus1').addEventListener('click', () => socket.emit('correctionOne', -1));
+    document.getElementById('plus2').addEventListener('click', () => socket.emit('correctionTwo', 1));
+    document.getElementById('minus2').addEventListener('click', () => socket.emit('correctionTwo', -1));
+    document.getElementById('reset').addEventListener('click', () => confirm('Zurücksetzen bestätigen') && socket.emit('reset'));
+</script>
+</html>
