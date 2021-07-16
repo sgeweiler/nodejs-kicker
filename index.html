@@ -38,11 +38,11 @@
   });
 
   document.getElementById('plus1').addEventListener('click', () => socket.emit('correctionOne', 1));
-  if (goalCountOne > 0) {
+  if (goalCountOne >= 0) {
     document.getElementById('minus1').addEventListener('click', () => socket.emit('correctionOne', -1));
   }
   document.getElementById('plus2').addEventListener('click', () => socket.emit('correctionTwo', 1));
-  if (goalCountTwo > 0) {
+  if (goalCountTwo >= 0) {
     document.getElementById('minus2').addEventListener('click', () => socket.emit('correctionTwo', -1));
   }
   document.getElementById('reset').addEventListener('click', () => confirm('Zurücksetzen bestätigen') && socket.emit('reset'));
