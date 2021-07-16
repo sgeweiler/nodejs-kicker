@@ -22,12 +22,20 @@ io.on('connect', function (client) {
 
     client.on('correctionOne', (amount) => {
         goalCountOne += amount;
-        updateGoal();
+        if (goalCountOne > 0){
+            updateGoal();
+        } else {
+            console.log("Score cant be smaller than 0");
+        }
     });
 
     client.on('correctionTwo', (amount) => {
         goalCountTwo += amount;
-        updateGoal();
+        if (goalCountTwo > 0){
+            updateGoal();
+        } else {
+            console.log("Score cant be smaller than 0");
+        }
     });
 
     client.on('reset', () => {
