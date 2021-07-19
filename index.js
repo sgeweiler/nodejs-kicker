@@ -63,6 +63,7 @@ if (os.platform() === 'linux') {
         lastGoal = Date.now()
         goalCountOne++
         updateGoal(goalCountOne);
+        console.log(goalCountOne);
     });
 
     PhotoDiodeTwo.watch(function (err, value) {
@@ -73,6 +74,7 @@ if (os.platform() === 'linux') {
         lastGoal = Date.now()
         goalCountTwo++
         updateGoal(goalCountTwo);
+        console.log(goalCountTwo);
     });
 
     function unexportOnClose() {
