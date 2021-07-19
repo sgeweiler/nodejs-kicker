@@ -27,13 +27,11 @@
 <script>
   /* const socket = io.connect('http://localhost:2301') */
   const socket = io();
-  let goalCountOne = document.getElementById("GC-1").innerHTML;
-  let goalCountTwo = document.getElementById("GC-2").innerHTML;
 
   socket.on('connect', function (data) {
     socket.on('goalCount', function (data) {
-      goalCountOne = data.goalCountOne;
-      goalCountTwo = data.goalCountTwo;
+      document.getElementById("GC-1").innerHTML = data.goalCountOne;
+      document.getElementById("GC-2").innerHTML = data.goalCountTwo;
     });
   });
 
