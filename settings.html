@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Kicker-Ronny</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<h2>Grundeinstellungen</h2>
+<form>
+    <label>
+        Name des Turniers
+        <input name="name">
+    </label><br>
+    <label>
+        Spielzeit
+        <input name="name">
+    </label><br>
+    <div>
+        <input type="radio" id="1" name="modus" value="1"
+               checked>
+        <label for="1">Turniermodus A</label>
+    </div>
+
+    <div>
+        <input type="radio" id="2" name="modus" value="2">
+        <label for="2">Turniermodus B</label>
+    </div>
+
+    <div>
+        <input type="radio" id="3" name="modus" value="3">
+        <label for="3">Ligamodus</label>
+    </div>
+</form>
+<hr>
+<!-- Output aus der Datenbank der Spieler -->
+<h2>Team-Einstellungen</h2>
+<table>
+    <tbody>
+    <tr>
+        <td>Löschen</td>
+        <td>#</td>
+        <td></td>
+        <td>Name</td>
+        <td>Icon</td>
+        <td>Farbe</td>
+        <td>Gruppe</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>
+            <button>Löschen</button>
+        </td>
+        <td>1</td>
+        <td>🚀</td>
+        <td><input placeholder="Name des Spielers"></td>
+        <td><input placeholder="rocket"></td>
+        <td><input type="color"></td>
+        <td>
+            <select>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+            </select>
+        </td>
+        <td><button>Speichern</button></td>
+    </tr>
+    </tbody>
+</table>
+<!--
+
+Plan: Formularfelder in die Datenbank übertragen
+Anhand der Menge der Teams/Spieler soll dann die Erstellung des Turnierplans modular erfolgen.
+
+Die Spielplan Tabelle soll kopiert werden und mit dem prefix des aktuellen Datums gespeichert werden. In Ebendieser passiert der Rest.
+(20210810-gameplan)
+
+Ligamodus
+Beispielhaft für (6) Teams/Spieler
+Hinspiel    Rückspiel
+[a | b]     [a | b]
+[a | c]     [a | c]
+[a | d]     [a | d]
+[a | e]     [a | e]
+[a | f]     [a | f]
+[b | c]     [b | c]
+[b | d]     [b | d]
+[b | e]     [b | e]
+[b | f]     [b | f]
+[c | d]     [c | d]
+[c | e]     [c | e]
+[c | f]     [c | f]
+[d | e]     [d | e]
+[d | f]     [d | f]
+[e | f]     [e | f]
+
+Die Liste der Spiele soll dann geshuffelt werden und so random erscheinen.
+
+Todo: Ungefähre Idee wie das funktionieren soll... 🦈
+
+-->
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    socket.on('connect', function (data) {
+
+    });
+</script>
+</html>

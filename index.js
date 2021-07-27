@@ -12,9 +12,26 @@ let goalCountTwo = 0;
 
 const {exec} = require('child_process')
 
+let mysql = require('mysql');
+
+let con = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'kicker-ronny'
+});
+
+con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connection to the database established")
+})
+
 app.use(express.static(__dirname + '/node_modules'));
 app.get('/', function (req, res, next) {
     res.sendFile(__dirname + '/index.html')
+});
+app.get('/settings', function (req, res, next) {
+    res.sendFile(__dirname + '/settings.html')
 });
 
 io.on('connect', function (client) {
@@ -37,6 +54,7 @@ io.on('connect', function (client) {
     });
 
     updateGoal();
+    getDataFromDatabase();
 });
 
 server.listen(2301);
@@ -47,6 +65,16 @@ function updateGoal() {
     !WIN && exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${goalCountOne} ${goalCountTwo}`)
     /* !WIN && exec(`python3 ${__dirname}/goal-count.py ${goalCountOne} ${goalCountTwo}`) */
     /* ../raspberrypi-python-tm1637 */
+}
+
+function getDataFromDatabase(){
+    con.query("SELECT * FROM players", function (err, result, fields) {
+        console.log(result)
+    })
+}
+
+function setData() {
+    con.query("INSERT INTO")
 }
 
 if (os.platform() === 'linux') {
