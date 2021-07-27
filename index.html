@@ -25,7 +25,6 @@
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    /* const socket = io.connect('http://localhost:2301') */
     const socket = io();
     socket.on('connect', function (data) {
         socket.on('goalCount', function (data) {
