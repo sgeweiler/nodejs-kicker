@@ -6,11 +6,12 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
 let lastGoal = 0;
-
 let goalCountOne = 0;
 let goalCountTwo = 0;
-
 const { exec } = require('child_process')
+
+/* Einstellungen für die Spielzeit aus der Datenbank holen */
+let playtime = 120;
 
 let mysql = require('mysql');
 
@@ -35,7 +36,8 @@ app.get('/settings', function (req, res, next) {
 });
 
 io.on('connect', function (client) {
-  console.log('Client connected...')
+  console.log('Client connected.')
+  io.emit('initialCountdown', playtime);
 
   client.on('correctionOne', (amount) => {
     goalCountOne += amount;
@@ -73,30 +75,18 @@ function updateGoal() {
 
 function getDataFromDatabase() {
   con.query("SELECT * FROM players", function (err, result, fields) {
-    console.log(result)
-  })
-}
 
-function setData() {
-  con.query("INSERT INTO")
+  })
 }
 
 function startGame() {
   io.emit('startGame');
-
-  /* Einstellungen für die Spielzeit aus der Datenbank holen */
-  let playtime = 120;
   io.emit('countdown', playtime)
 
   let intervall = setInterval(function () {
-    playtime--;
     io.emit('countdown', playtime)
+    playtime--;
     console.log(playtime);
-    if (playtime <= 0) {
-      console.log("Spiel zu Ende");
-      /* Evtl. Event mit endGame*/
-      clearInterval(intervall);
-    }
 
     if (playtime === 10){
       /* Emit für den Sound */
@@ -106,6 +96,12 @@ function startGame() {
     if (playtime === 3){
       /* Emit für den Sound */
       io.emit('threeSeconds')
+    }
+
+    if (playtime <= 0) {
+      console.log("Spiel zu Ende");
+      /* Evtl. Event mit endGame*/
+      clearInterval(intervall);
     }
   }, 1000)
 }
