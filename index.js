@@ -10,105 +10,138 @@ let lastGoal = 0;
 let goalCountOne = 0;
 let goalCountTwo = 0;
 
-const {exec} = require('child_process')
+const { exec } = require('child_process')
 
 let mysql = require('mysql');
 
 let con = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'kicker-ronny'
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'kicker-ronny'
 });
 
 con.connect(function (err) {
-    if (err) throw err;
-    console.log("Connection to the database established")
+  if (err) throw err;
+  console.log("Connection to the database established")
 })
 
 app.use(express.static(__dirname + '/node_modules'));
 app.get('/', function (req, res, next) {
-    res.sendFile(__dirname + '/index.html')
+  res.sendFile(__dirname + '/index.html')
 });
 app.get('/settings', function (req, res, next) {
-    res.sendFile(__dirname + '/settings.html')
+  res.sendFile(__dirname + '/settings.html')
 });
 
 io.on('connect', function (client) {
-    console.log('Client connected...')
+  console.log('Client connected...')
 
-    client.on('correctionOne', (amount) => {
-        goalCountOne += amount;
-        updateGoal();
-    });
-
-    client.on('correctionTwo', (amount) => {
-        goalCountTwo += amount;
-        updateGoal();
-    });
-
-    client.on('reset', () => {
-        goalCountOne = 0;
-        goalCountTwo = 0;
-        updateGoal();
-    });
-
+  client.on('correctionOne', (amount) => {
+    goalCountOne += amount;
     updateGoal();
-    getDataFromDatabase();
+  });
+
+  client.on('correctionTwo', (amount) => {
+    goalCountTwo += amount;
+    updateGoal();
+  });
+
+  client.on('reset', () => {
+    goalCountOne = 0;
+    goalCountTwo = 0;
+    updateGoal();
+  });
+
+  client.on('start', () => {
+    startGame();
+  })
+
+  updateGoal();
+  getDataFromDatabase();
 });
 
 server.listen(2301);
 
 function updateGoal() {
-    io.emit('goalCount', {goalCountOne, goalCountTwo});
-    /* Pfad muss auf den Ordner der TM1637 Bibliothek angepasst werden */
-    !WIN && exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${goalCountOne} ${goalCountTwo}`)
-    /* !WIN && exec(`python3 ${__dirname}/goal-count.py ${goalCountOne} ${goalCountTwo}`) */
-    /* ../raspberrypi-python-tm1637 */
+  io.emit('goalCount', { goalCountOne, goalCountTwo });
+  /* Pfad muss auf den Ordner der TM1637 Bibliothek angepasst werden */
+  !WIN && exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${goalCountOne} ${goalCountTwo}`)
+  /* !WIN && exec(`python3 ${__dirname}/goal-count.py ${goalCountOne} ${goalCountTwo}`) */
+  /* ../raspberrypi-python-tm1637 */
 }
 
-function getDataFromDatabase(){
-    con.query("SELECT * FROM players", function (err, result, fields) {
-        console.log(result)
-    })
+function getDataFromDatabase() {
+  con.query("SELECT * FROM players", function (err, result, fields) {
+    console.log(result)
+  })
 }
 
 function setData() {
-    con.query("INSERT INTO")
+  con.query("INSERT INTO")
+}
+
+function startGame() {
+  io.emit('startGame');
+
+  /* Einstellungen für die Spielzeit aus der Datenbank holen */
+  let playtime = 120;
+  io.emit('countdown', playtime)
+
+  let intervall = setInterval(function () {
+    playtime--;
+    io.emit('countdown', playtime)
+    console.log(playtime);
+    if (playtime <= 0) {
+      console.log("Spiel zu Ende");
+      /* Evtl. Event mit endGame*/
+      clearInterval(intervall);
+    }
+
+    if (playtime === 10){
+      /* Emit für den Sound */
+      io.emit('tenSeconds')
+    }
+
+    if (playtime === 3){
+      /* Emit für den Sound */
+      io.emit('threeSeconds')
+    }
+  }, 1000)
 }
 
 if (os.platform() === 'linux') {
-    console.log('executing on raspberry')
-    const Gpio = require('onoff').Gpio;
-    const PhotoDiodeOne = new Gpio(21, 'in', 'both')
-    const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
+  console.log('executing on raspberry')
+  const Gpio = require('onoff').Gpio;
+  const PhotoDiodeOne = new Gpio(21, 'in', 'both')
+  const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
 
-    PhotoDiodeOne.watch(function (err, value) {
-        if (err)
-            return console.error(err);
-        if (value === 0 || Date.now() - 4000 < lastGoal)
-            return
-        lastGoal = Date.now()
-        goalCountOne++
-        updateGoal(goalCountOne);
-        console.log(goalCountOne);
-    });
+  PhotoDiodeOne.watch(function (err, value) {
+    if (err)
+      return console.error(err);
+    if (value === 0 || Date.now() - 4000 < lastGoal)
+      return
+    lastGoal = Date.now()
+    goalCountOne++
+    updateGoal(goalCountOne);
+    console.log(goalCountOne);
+  });
 
-    PhotoDiodeTwo.watch(function (err, value) {
-        if (err)
-            return console.error(err);
-        if (value === 0 || Date.now() - 4000 < lastGoal)
-            return
-        lastGoal = Date.now()
-        goalCountTwo++
-        updateGoal(goalCountTwo);
-        console.log(goalCountTwo);
-    });
+  PhotoDiodeTwo.watch(function (err, value) {
+    if (err)
+      return console.error(err);
+    if (value === 0 || Date.now() - 4000 < lastGoal)
+      return
+    lastGoal = Date.now()
+    goalCountTwo++
+    updateGoal(goalCountTwo);
+    console.log(goalCountTwo);
+  });
 
-    function unexportOnClose() {
-        PhotoDiodeOne.unexport();
-        PhotoDiodeTwo.unexport();
-    }
+  function unexportOnClose() {
+    PhotoDiodeOne.unexport();
+    PhotoDiodeTwo.unexport();
+  }
 
-    process.on('SIGINT', unexportOnClose);
+  process.on('SIGINT', unexportOnClose);
 }

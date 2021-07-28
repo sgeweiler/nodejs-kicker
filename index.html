@@ -23,6 +23,7 @@
   <button id="minus2">-</button>
 </div>
 <button id="reset">Spielstand zurücksetzen</button>
+<button id="start">Spiel starten</button>
 </body>
 <footer>
   <a href="/settings">Einstellungen</a>
@@ -37,6 +38,7 @@
       document.getElementById("GC-1").innerHTML = data.goalCountOne;
       document.getElementById("GC-2").innerHTML = data.goalCountTwo;
     });
+    socket.on('startGame')
   });
 
   document.getElementById('plus1').addEventListener('click', () => socket.emit('correctionOne', 1));
@@ -44,5 +46,6 @@
   document.getElementById('plus2').addEventListener('click', () => socket.emit('correctionTwo', 1));
   document.getElementById('minus2').addEventListener('click', () => socket.emit('correctionTwo', -1));
   document.getElementById('reset').addEventListener('click', () => confirm('Zurücksetzen bestätigen') && socket.emit('reset'));
+  document.getElementById('start').addEventListener('click', () => socket.emit('start'));
 </script>
 </html>
