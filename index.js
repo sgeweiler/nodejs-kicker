@@ -28,6 +28,8 @@ con.connect(function (err) {
 })
 
 app.use(express.static(__dirname + '/node_modules'));
+app.use(express.static(__dirname + '/src'));
+
 app.get('/', function (req, res, next) {
   res.sendFile(__dirname + '/index.html')
 });
@@ -84,23 +86,20 @@ function startGame() {
   io.emit('countdown', playtime)
 
   let intervall = setInterval(function () {
-    io.emit('countdown', playtime)
     playtime--;
+    io.emit('countdown', playtime)
     console.log(playtime);
 
     if (playtime === 10){
-      /* Emit für den Sound */
       io.emit('tenSeconds')
     }
 
-    if (playtime === 3){
-      /* Emit für den Sound */
-      io.emit('threeSeconds')
+    if (playtime === 30){
+      io.emit('thirtySeconds')
     }
 
     if (playtime <= 0) {
       console.log("Spiel zu Ende");
-      /* Evtl. Event mit endGame*/
       clearInterval(intervall);
     }
   }, 1000)
