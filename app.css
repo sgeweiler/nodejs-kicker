@@ -1,3 +1,7 @@
 body {
-    background: url("src/background.jpg") no-repeat top center fixed;
+    //background: url("src/background.jpg") no-repeat top center fixed;
+}
+
+#countdown {
+    font-size: 60px;
 }

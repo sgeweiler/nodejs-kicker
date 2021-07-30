@@ -12,11 +12,6 @@
   <button id="plus1">+</button>
   <button id="minus1">-</button>
 </div>
-<div style="width: 100%">
-  <div>
-    <p id="countdown"></p>
-  </div>
-</div>
 <div style="float: left; padding: 100px; font-size: 60px">
   <p id="GC-1">0</p>
 </div>
@@ -29,7 +24,13 @@
 </div>
 <button id="reset">Spielstand zurücksetzen</button>
 <button id="start">Spiel starten</button>
+<div style="width: 100%">
+  <div style="font-size: 70px">
+    <p id="countdown"></p>
+  </div>
+</div>
 </body>
+
 <footer>
   <a href="/settings">Einstellungen</a>
 </footer>
@@ -64,16 +65,13 @@
         document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
       else
         document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
-      console.log(seconds);
     })
 
     socket.on('thirtySeconds', function () {
-      console.log("30 Sekunden noch");
       thirtySeconds.play();
     })
 
     socket.on('tenSeconds', function () {
-      console.log("10 Sekunden noch");
       tenSeconds.play();
     })
 
