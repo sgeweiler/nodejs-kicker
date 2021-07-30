@@ -23,13 +23,59 @@
   <button id="minus2">-</button>
 </div>
 <button id="reset">Spielstand zurücksetzen</button>
+<button id="start">Spiel starten</button>
+<div style="width: 100%">
+  <div style="font-size: 70px">
+    <p id="countdown"></p>
+  </div>
+</div>
 </body>
+
+<footer>
+  <a href="/settings">Einstellungen</a>
+</footer>
 <script src="/socket.io/socket.io.js"></script>
 <script>
   /* const socket = io.connect('http://localhost:2301') */
   const socket = io();
+  const whistle = new Audio('/sounds/whistle.ogg');
+  const thirtySeconds = new Audio('/sounds/countdown-30-seconds.ogg');
+  const tenSeconds = new Audio('/sounds/countdown-1.ogg');
 
   socket.on('connect', function (data) {
+
+    socket.on('initialCountdown', function (playtime) {
+      let minutes = Math.floor(playtime / 60);
+      let seconds = playtime - minutes * 60;
+      if (seconds < 10)
+        document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
+      else
+        document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
+    })
+
+    socket.on('startGame', function (data) {
+      whistle.play();
+    });
+
+    socket.on('countdown', function (playtime) {
+      let minutes = Math.floor(playtime / 60);
+      let seconds = playtime - minutes * 60;
+
+      if (seconds < 10)
+        document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
+      else
+        document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
+    })
+
+    socket.on('thirtySeconds', function () {
+      thirtySeconds.play();
+    })
+
+    socket.on('tenSeconds', function () {
+      tenSeconds.play();
+    })
+
+
     socket.on('goalCount', function (data) {
       document.getElementById("GC-1").innerHTML = data.goalCountOne;
       document.getElementById("GC-2").innerHTML = data.goalCountTwo;
@@ -41,5 +87,6 @@
   document.getElementById('plus2').addEventListener('click', () => socket.emit('correctionTwo', 1));
   document.getElementById('minus2').addEventListener('click', () => socket.emit('correctionTwo', -1));
   document.getElementById('reset').addEventListener('click', () => confirm('Zurücksetzen bestätigen') && socket.emit('reset'));
+  document.getElementById('start').addEventListener('click', () => socket.emit('start'));
 </script>
 </html>
