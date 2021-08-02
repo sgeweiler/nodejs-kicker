@@ -143,9 +143,9 @@ if (os.platform() === 'linux') {
   CorrectButtonGreenOne.watch(function (err, value) {
     if (err)
       return console.error(err)
+    console.log('Correction Send', value);
     if (value === 0)
       return
-    console.log('Correction Send');
   });
 
   function unexportOnClose() {
