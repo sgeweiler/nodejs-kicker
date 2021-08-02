@@ -118,7 +118,7 @@ if (os.platform() === 'linux') {
   const PhotoDiodeOne = new Gpio(21, 'in', 'both')
   const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
   const CorrectButtonGreenOne = new Gpio(19, 'in', 'both' )
-  let ControllDate = Date.now();
+  let ControlDate;
 
   PhotoDiodeOne.watch(function (err, value) {
     if (err)
@@ -143,16 +143,14 @@ if (os.platform() === 'linux') {
   });
 
   CorrectButtonGreenOne.watch(function (err, value) {
-    console.log('Correction Send', value);
-    let pressed;
+    console.log('Wert:', value);
     if (err)
       return console.error(err)
 
     if (value === 1)
-      pressed = true;
+      ControlDate = Date.now();
 
-    if (value === 0 && ControllDate - 3000 < Date.now() && pressed === true)
-      pressed = false;
+    if (value === 0 && ControlDate - 3000 < Date.now())
       return console.log('Korrektur wird gesendet')
   });
 
