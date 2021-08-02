@@ -75,9 +75,9 @@ server.listen(2301);
 
 function updateGoal() {
   io.emit('goalCount', { goalCountOne, goalCountTwo });
-
-  /* Pfad muss auf den Ordner der TM1637 Bibliothek angepasst werden
   !WIN && exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${goalCountOne} ${goalCountTwo}`)
+
+  /* Pfad muss auf den Ordner der TM1637 Bibliothek angepasst werden */
   /* !WIN && exec(`python3 ${__dirname}/goal-count.py ${goalCountOne} ${goalCountTwo}`) */
   /* ../raspberrypi-python-tm1637 */
 }
