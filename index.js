@@ -15,6 +15,7 @@ let playtime = 120;
 
 let mysql = require('mysql');
 const { compileTrust } = require("express/lib/utils");
+const { Gpio } = require("onoff");
 
 let con = mysql.createConnection({
   host: 'localhost',
@@ -119,7 +120,10 @@ if (os.platform() === 'linux') {
   const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
 
   const CorrectButtonGreenOne = new Gpio(19, 'in', 'both')
+  const CorrectButtonRedOne = new Gpio(17, 'in', 'both')
+
   const CorrectButtonGreenTwo = new Gpio(13, 'in', 'both')
+  const CorrectButtonRedTwo = new Gpio(27, 'in', 'both')
 
   let ControlDate = null;
 
@@ -174,6 +178,37 @@ if (os.platform() === 'linux') {
       console.log(goalCountTwo);
     }
   });
+
+  CorrectButtonRedOne.watch(function (err, value) {
+    if (err)
+      return console.error(err)
+
+    if (value === 1)
+      ControlDate = Date.now();
+
+    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
+      ControlDate = null;
+      goalCountTwo--
+      updateGoal(goalCountOne);
+      console.log(goalCountOne);
+    }
+  });
+
+  CorrectButtonRedTwo.watch(function (err, value) {
+    if (err)
+      return console.error(err)
+
+    if (value === 1)
+      ControlDate = Date.now();
+
+    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
+      ControlDate = null;
+      goalCountTwo--
+      updateGoal(goalCountTwo);
+      console.log(goalCountTwo);
+    }
+  });
+
 
   function unexportOnClose() {
     PhotoDiodeOne.unexport();
