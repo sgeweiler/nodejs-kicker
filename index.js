@@ -117,6 +117,7 @@ if (os.platform() === 'linux') {
   const PhotoDiodeOne = new Gpio(21, 'in', 'both')
   const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
   const CorrectButtonGreenOne = new Gpio(19, 'in', 'both' )
+  const ControllDate = Date.now();
 
   PhotoDiodeOne.watch(function (err, value) {
     if (err)
@@ -141,11 +142,11 @@ if (os.platform() === 'linux') {
   });
 
   CorrectButtonGreenOne.watch(function (err, value) {
+    console.log('Correction Send', value);
     if (err)
       return console.error(err)
-    console.log('Correction Send', value);
-    if (value === 0)
-      return
+    if (value === 0 && ControllDate - 3000 < Date.now())
+      return console.log('Korrektur wird nach 3 Sekunden gesendet.')
   });
 
   function unexportOnClose() {
