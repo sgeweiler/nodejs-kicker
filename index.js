@@ -117,7 +117,7 @@ if (os.platform() === 'linux') {
   const PhotoDiodeOne = new Gpio(21, 'in', 'both')
   const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
   const CorrectButtonGreenOne = new Gpio(19, 'in', 'both' )
-  const ControllDate = Date.now();
+  let ControllDate = Date.now();
 
   PhotoDiodeOne.watch(function (err, value) {
     if (err)
@@ -145,7 +145,9 @@ if (os.platform() === 'linux') {
     console.log('Correction Send', value);
     if (err)
       return console.error(err)
-    if (value === 0 && ControllDate - 3000 < Date.now())
+    if (value === 1)
+      ControllDate = null;
+    if (value === 0 && ControllDate - 3000 < Date.now() && ControllDate != null)
       return console.log('Korrektur wird nach 3 Sekunden gesendet.')
   });
 
