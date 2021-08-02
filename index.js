@@ -97,11 +97,11 @@ function startGame() {
     io.emit('countdown', playtime)
     console.log(playtime);
 
-    if (playtime === 10){
+    if (playtime === 10) {
       io.emit('tenSeconds')
     }
 
-    if (playtime === 30){
+    if (playtime === 30) {
       io.emit('thirtySeconds')
     }
 
@@ -117,8 +117,8 @@ if (os.platform() === 'linux') {
   const Gpio = require('onoff').Gpio;
   const PhotoDiodeOne = new Gpio(21, 'in', 'both')
   const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
-  const CorrectButtonGreenOne = new Gpio(19, 'in', 'both' )
-  let ControlDate;
+  const CorrectButtonGreenOne = new Gpio(19, 'in', 'both')
+  let ControlDate = null;
 
   PhotoDiodeOne.watch(function (err, value) {
     if (err)
@@ -150,8 +150,10 @@ if (os.platform() === 'linux') {
     if (value === 1)
       ControlDate = Date.now();
 
-    if (value === 0 && ControlDate - 3000 > Date.now())
-      return console.log('Korrektur wird gesendet')
+    if (value === 0 && ControlDate != null && ControlDate + 3000 > Date.now()) {
+      ControlDate = null;
+      return console.log('Korrektur wird gesendet');
+    }
   });
 
   function unexportOnClose() {
