@@ -156,7 +156,7 @@ if (os.platform() === 'linux') {
     if (value === 1)
       ControlDate = Date.now();
 
-    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
+    if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
       goalCountOne++
       updateGoal(goalCountOne);
@@ -171,7 +171,7 @@ if (os.platform() === 'linux') {
     if (value === 1)
       ControlDate = Date.now();
 
-    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
+    if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
       goalCountTwo++
       updateGoal(goalCountTwo);
@@ -186,7 +186,7 @@ if (os.platform() === 'linux') {
     if (value === 1)
       ControlDate = Date.now();
 
-    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
+    if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
       goalCountOne--
       updateGoal(goalCountOne);
@@ -201,7 +201,7 @@ if (os.platform() === 'linux') {
     if (value === 1)
       ControlDate = Date.now();
 
-    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
+    if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
       goalCountTwo--
       updateGoal(goalCountTwo);
