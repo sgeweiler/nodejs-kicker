@@ -147,7 +147,7 @@ if (os.platform() === 'linux') {
       return console.error(err)
     if (value === 1)
       ControllDate = null;
-    if (value === 0 && ControllDate - 3000 < Date.now() && ControllDate != null)
+    if (value === 0 && ControllDate - 3000 < Date.now() && ControllDate == null)
       return console.log('Korrektur wird nach 3 Sekunden gesendet.')
   });
 
