@@ -14,6 +14,7 @@ const { exec } = require('child_process')
 let playtime = 120;
 
 let mysql = require('mysql');
+const { compileTrust } = require("express/lib/utils");
 
 let con = mysql.createConnection({
   host: 'localhost',
@@ -143,12 +144,16 @@ if (os.platform() === 'linux') {
 
   CorrectButtonGreenOne.watch(function (err, value) {
     console.log('Correction Send', value);
+    let pressed;
     if (err)
       return console.error(err)
+
     if (value === 1)
-      ControllDate = null;
-    if (value === 0 && ControllDate - 3000 < Date.now() && ControllDate == null)
-      return console.log('Korrektur wird nach 3 Sekunden gesendet.')
+      let pressed = true;
+
+    if (value === 0 && ControllDate - 3000 < Date.now() && pressed === true)
+      pressed = false;
+      return console.log('Korrektur wird gesendet')
   });
 
   function unexportOnClose() {
