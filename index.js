@@ -154,8 +154,7 @@ if (os.platform() === 'linux') {
       ControlDate = null;
       goalCountOne++
       updateGoal(goalCountOne);
-
-      return console.log('Korrektur wird gesendet');
+      console.log(goalCountOne);
     }
   });
 
