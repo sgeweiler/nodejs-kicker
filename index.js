@@ -149,7 +149,7 @@ if (os.platform() === 'linux') {
       return console.error(err)
 
     if (value === 1)
-      let pressed = true;
+      pressed = true;
 
     if (value === 0 && ControllDate - 3000 < Date.now() && pressed === true)
       pressed = false;
