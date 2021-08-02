@@ -152,6 +152,9 @@ if (os.platform() === 'linux') {
 
     if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
       ControlDate = null;
+      goalCountOne++
+      updateGoal(goalCountOne);
+
       return console.log('Korrektur wird gesendet');
     }
   });
