@@ -117,7 +117,10 @@ if (os.platform() === 'linux') {
   const Gpio = require('onoff').Gpio;
   const PhotoDiodeOne = new Gpio(21, 'in', 'both')
   const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
+
   const CorrectButtonGreenOne = new Gpio(19, 'in', 'both')
+  const CorrectButtonGreenTwo = new Gpio(13, 'in', 'both')
+
   let ControlDate = null;
 
   PhotoDiodeOne.watch(function (err, value) {
@@ -143,7 +146,6 @@ if (os.platform() === 'linux') {
   });
 
   CorrectButtonGreenOne.watch(function (err, value) {
-    console.log('Wert:', value);
     if (err)
       return console.error(err)
 
@@ -155,6 +157,21 @@ if (os.platform() === 'linux') {
       goalCountOne++
       updateGoal(goalCountOne);
       console.log(goalCountOne);
+    }
+  });
+
+  CorrectButtonGreenTwo.watch(function (err, value) {
+    if (err)
+      return console.error(err)
+
+    if (value === 1)
+      ControlDate = Date.now();
+
+    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
+      ControlDate = null;
+      goalCountTwo++
+      updateGoal(goalCountTwo);
+      console.log(goalCountTwo);
     }
   });
 
