@@ -188,7 +188,7 @@ if (os.platform() === 'linux') {
 
     if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
       ControlDate = null;
-      goalCountTwo--
+      goalCountOne--
       updateGoal(goalCountOne);
       console.log(goalCountOne);
     }
