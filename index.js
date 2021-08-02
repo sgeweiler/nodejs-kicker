@@ -19,7 +19,7 @@ let con = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'kicker-ronny'
+  database: 'kicker-ronny',
 });
 
 con.connect(function (err) {
@@ -62,6 +62,10 @@ io.on('connect', function (client) {
     startGame();
   })
 
+  client.on('settingSet', (settingName) => {
+    console.log(settingName);
+  })
+
   updateGoal();
   getDataFromDatabase();
 });
@@ -71,7 +75,7 @@ server.listen(2301);
 function updateGoal() {
   io.emit('goalCount', { goalCountOne, goalCountTwo });
 
-  /* Pfad muss auf den Ordner der TM1637 Bibliothek angepasst werden */
+  /* Pfad muss auf den Ordner der TM1637 Bibliothek angepasst werden
   !WIN && exec(`python3 ../raspberrypi-python-tm1637/goal-count.py ${goalCountOne} ${goalCountTwo}`)
   /* !WIN && exec(`python3 ${__dirname}/goal-count.py ${goalCountOne} ${goalCountTwo}`) */
   /* ../raspberrypi-python-tm1637 */
@@ -112,6 +116,7 @@ if (os.platform() === 'linux') {
   const Gpio = require('onoff').Gpio;
   const PhotoDiodeOne = new Gpio(21, 'in', 'both')
   const PhotoDiodeTwo = new Gpio(12, 'in', 'both')
+  const CorrectButtonGreenOne = new Gpio(19, 'in', 'both' )
 
   PhotoDiodeOne.watch(function (err, value) {
     if (err)
@@ -133,6 +138,14 @@ if (os.platform() === 'linux') {
     goalCountTwo++
     updateGoal(goalCountTwo);
     console.log(goalCountTwo);
+  });
+
+  CorrectButtonGreenOne.watch(function (err, value) {
+    if (err)
+      return console.error(err)
+    if (value === 0)
+      return
+    console.log('Correction Send');
   });
 
   function unexportOnClose() {
