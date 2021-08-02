@@ -150,7 +150,7 @@ if (os.platform() === 'linux') {
     if (value === 1)
       ControlDate = Date.now();
 
-    if (value === 0 && ControlDate != null && ControlDate + 3000 > Date.now()) {
+    if (value === 0 && ControlDate != null && ControlDate + 3000 < Date.now()) {
       ControlDate = null;
       return console.log('Korrektur wird gesendet');
     }
