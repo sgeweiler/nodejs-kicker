@@ -46,10 +46,11 @@ io.on('connect', function (client) {
   
   con.query("SELECT title FROM settings", function (err, result, fields) {
     if (err) throw err;
-    console.log(result);
+    // Nochmal überdenken ...
+    let tournamentTitle = result[1].title;
+
+    io.emit('initialCountdown', playtime, tournamentTitle);
   })
-  
-  io.emit('initialCountdown', playtime);
 
   client.on('correctionOne', (amount) => {
     goalCountOne += amount;
