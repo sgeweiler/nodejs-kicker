@@ -43,7 +43,13 @@ app.get('/settings', function (req, res, next) {
 
 io.on('connect', function (client) {
   console.log('Client connected.')
-  io.emit('initialCountdown', playtime, tournamentName);
+  
+  con.query("SELECT title FROM settings", function (err, result, fields) {
+    if (err) throw err;
+    console.log(result);
+  })
+  
+  io.emit('initialCountdown', playtime);
 
   client.on('correctionOne', (amount) => {
     goalCountOne += amount;
