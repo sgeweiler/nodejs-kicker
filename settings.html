@@ -29,13 +29,13 @@
       <label for="3">Ligamodus</label>
     </div>
   </div>
-  <button type="submit" id="saveSettings">Speichern</button>
+  <button type="submit" id="saveSettings" onclick="window.history.back();">Speichern</button>
 </form>
 <hr>
 <!-- Output aus der Datenbank der Spieler -->
 <h2>Team-Einstellungen</h2>
 <table>
-  <tbody>
+  <thead>
   <tr>
     <td>Löschen</td>
     <td>#</td>
@@ -46,25 +46,27 @@
     <td>Gruppe</td>
     <td></td>
   </tr>
+  </thead>
+  <tbody>
   <tr>
-    <td>
-      <button>Löschen</button>
-    </td>
-    <td>1</td>
-    <td>🚀</td>
-    <td><input placeholder="Name des Spielers"></td>
-    <td><input placeholder="rocket"></td>
-    <td><input type="color"></td>
-    <td>
-      <select>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-      </select>
-    </td>
-    <td>
-      <button>Speichern</button>
-    </td>
+    <form id="players" name="players">
+      <td></td>
+      <td>1</td>
+      <td>🚀</td>
+      <td><input type="text" name="playerName" placeholder="Name des Spielers"></td>
+      <td><input type="text" name="icon" placeholder="rocket"></td>
+      <td><input type="color" name="color"></td>
+      <td>
+        <select>
+          <option name="group">1</option>
+          <option name="group">2</option>
+          <option name="group">3</option>
+        </select>
+      </td>
+      <td>
+        <button type="submit" id="savePlayers" onclick="/*window.location.reload();*/">Speichern</button>
+      </td>
+    </form>
   </tr>
   </tbody>
 </table>
@@ -114,11 +116,27 @@ Ungefähre Idee wie das funktionieren soll... 🦈
     let playTime = settingForm.get('playtime');
     let gameMode = settingForm.get('modus');
 
-    socket.emit('settings', {name: tournamentName, time: playTime, mode: gameMode});
+    socket.emit('settings', { name: tournamentName, time: playTime, mode: gameMode });
+  }
+
+  let playersForm = document.getElementById('players');
+  playersForm.addEventListener('submit', getPlayersSubmit);
+
+  function getPlayersSubmit(event) {
+    event.preventDefault();
+    let playerForm = new FormData(document.getElementById('players'));
+    let playerName = playerForm.get('playerName');
+    let icon = playerForm.get('icon');
+    let color = playerForm.get('color');
+    let group = playerForm.get('group');
+
+    console.log(playerName, icon, color, group)
+
+    socket.emit('playerInput', { p: playerName, i: icon, c: color, g: group })
   }
 
   socket.on('connect', function (data) {
-
+    console.log('Settings connected');
   });
 </script>
 </html>
