@@ -143,7 +143,7 @@ Ungefähre Idee wie das funktionieren soll... 🦈
 
     socket.on('playerDataReceived', function (values){
       for (const value of Object.entries(values)){
-        console.log(value);
+        console.log(value[1]);
       }
       /*console.log(values);*/
     })
