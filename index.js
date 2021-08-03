@@ -117,9 +117,8 @@ function updateGoal() {
 
 function getDataFromDatabase() {
   con.query("SELECT * FROM players", function (err, result, fields) {
-    let playerSettingsData = [result[0], result[1], result[2], result[3], result[4]]
-    console.log(playerSettingsData);
-    io.emit('playerDataReceived');
+    if (err) throw err;
+    io.emit('playerDataReceived', result);
   })
 }
 
