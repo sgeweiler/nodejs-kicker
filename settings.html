@@ -7,24 +7,29 @@
 </head>
 <body>
 <h2>Grundeinstellungen</h2>
-<form>
+<form id="settings" name="settings">
+  <label for="tournamentName"></label>
   <input type="text" name="tournamentName" id="tournamentName">
+  <br><br>
+  <label for="playtime"></label>
   <input type="number" name="playtime" id="playtime">
-
+  <br><br>
   <div>
-    <input type="radio" id="1" name="modus" value="1"
-           checked>
-    <label for="1">Turniermodus A</label>
+    <div>
+      <input type="radio" id="1" name="modus" value="1"
+             checked>
+      <label for="1">Turniermodus A</label>
+    </div>
+    <div>
+      <input type="radio" id="2" name="modus" value="2">
+      <label for="2">Turniermodus B</label>
+    </div>
+    <div>
+      <input type="radio" id="3" name="modus" value="3">
+      <label for="3">Ligamodus</label>
+    </div>
   </div>
-  <div>
-    <input type="radio" id="2" name="modus" value="2">
-    <label for="2">Turniermodus B</label>
-  </div>
-  <div>
-    <input type="radio" id="3" name="modus" value="3">
-    <label for="3">Ligamodus</label>
-  </div>
-  <button id="saveSettings" onclick="return getData()">Speichern</button>
+  <button type="submit" id="saveSettings">Speichern</button>
 </form>
 <hr>
 <!-- Output aus der Datenbank der Spieler -->
@@ -99,13 +104,18 @@ Ungefähre Idee wie das funktionieren soll... 🦈
 <script src="/socket.io/socket.io.js"></script>
 <script>
   const socket = io();
+  let settingForm = document.getElementById('settings');
+  settingForm.addEventListener('submit', getSettingSubmit);
 
-  let saveButton = document.getElementById('saveSettings');
-  saveButton.addEventListener('click', function () {
-    let settingName = document.getElementById('saveSettings').value;
+  function getSettingSubmit(event) {
+    event.preventDefault();
+    let settingForm = new FormData(document.getElementById('settings'));
+    let tournamentName = settingForm.get('tournamentName');
+    let playTime = settingForm.get('playtime');
+    let gameMode = settingForm.get('modus');
 
-    socket.emit('settingSet', settingName)
-  });
+    socket.emit('settings', {name: tournamentName, time: playTime, mode: gameMode});
+  }
 
   socket.on('connect', function (data) {
 

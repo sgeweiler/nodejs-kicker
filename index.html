@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<h1>Tischkicker Node.js Projekt</h1>
+<h1 id="tournamentName">Tischkicker Node.js Projekt</h1>
 
 <div style="float: left; padding: 100px; margin-top: 75px">
   <button id="plus1">+</button>
@@ -51,6 +51,10 @@
         document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
       else
         document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
+    })
+
+    socket.on('settingsSet', function (playtime, tournamentName) {
+      document.getElementById('tournamentName').innerHTML = tournamentName;
     })
 
     socket.on('startGame', function (data) {

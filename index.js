@@ -12,6 +12,7 @@ const { exec } = require('child_process')
 
 /* Einstellungen für die Spielzeit aus der Datenbank holen */
 let playtime = 120;
+let tournamentName = "Titel des Turniers";
 
 let mysql = require('mysql');
 const { compileTrust } = require("express/lib/utils");
@@ -43,6 +44,7 @@ app.get('/settings', function (req, res, next) {
 io.on('connect', function (client) {
   console.log('Client connected.')
   io.emit('initialCountdown', playtime);
+  io.emit('settingsSet', tournamentName);
 
   client.on('correctionOne', (amount) => {
     goalCountOne += amount;
@@ -64,8 +66,16 @@ io.on('connect', function (client) {
     startGame();
   })
 
-  client.on('settingSet', (settingName) => {
-    console.log(settingName);
+  client.on('settings', (setting) => {
+    let values = [setting.name, setting.time, setting.mode]
+
+    playtime = setting.time;
+    tournamentName = setting.name;
+
+    con.query("INSERT INTO settings (title, playtime, mode) VALUES (?, ?, ?)", values, function (err, result) {
+      if (err) throw err;
+      console.log('Einstellungen erfolgreich gesetzt');
+    });
   })
 
   updateGoal();
