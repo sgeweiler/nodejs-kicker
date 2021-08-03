@@ -144,14 +144,10 @@ Ungefähre Idee wie das funktionieren soll... 🦈
     let color = playerForm.get('color');
     let group = playerForm.get('group-pick');
 
-    console.log(playerName, icon, color, group);
-
     socket.emit('playerInput', { playerName: playerName, icon: icon, color: color, group: group });
   }
 
   socket.on('connect', function (data) {
-    console.log('Settings connected');
-
     socket.on('playerDataReceived', function (values) {
 
       let playerDataTable = document.getElementById('playerData');
@@ -171,12 +167,7 @@ Ungefähre Idee wie das funktionieren soll... 🦈
         let clone = document.importNode(template.content, true);
         playerDataTable.appendChild(clone);
 
-        console.log(value[1].id);
-        console.log(value[1].name);
-        console.log(value[1].icon);
-        console.log(value[1].color);
       }
-      /*console.log(values);*/
     })
   });
 </script>
