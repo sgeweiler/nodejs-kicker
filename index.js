@@ -44,12 +44,18 @@ app.get('/settings', function (req, res, next) {
 io.on('connect', function (client) {
   console.log('Client connected.')
 
-  con.query("SELECT title FROM settings", function (err, result, fields) {
+  con.query("SELECT title, playtime FROM settings", function (err, result, fields) {
     if (err) throw err;
     // todo: Nochmal überdenken ...
-    let tournamentTitle = result[1].title;
+    let tournamentTitle = result[0].title;
+    let playtime = result[0].playtime;
 
     io.emit('initialCountdown', playtime, tournamentTitle);
+  })
+
+  con.query("SELECT name, wins, draws, defeat, goals, countergoals, score, games FROM players", function (err, result, fields) {
+    if (err) throw err;
+    io.emit('fullPlayerStats', result);
   })
 
   client.on('correctionOne', (amount) => {
