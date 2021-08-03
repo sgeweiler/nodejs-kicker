@@ -62,6 +62,10 @@
       </template>
     </table>
   </div>
+  <div>
+    <h2>Spielplan</h2>
+    <p>Tja keine Ahnung wie ich den generieren soll...</p>
+  </div>
 </div>
 </body>
 
@@ -89,6 +93,7 @@
     })
 
     socket.on('startGame', function (data) {
+      /* Todo: Countdown 3 Seconds evtl. Alert?*/
       whistle.play();
     });
 
@@ -121,7 +126,7 @@
 
       let playerDataTable = document.getElementById('playerFullEntries');
       let template = document.querySelector('#playerFullEntries');
-      for (const value of Object.entries(values)){
+      for (const value of Object.entries(values)) {
         template.content.querySelector('.playerName').innerText = value[1].name;
         template.content.querySelector('.playerWins').innerText = value[1].wins;
         template.content.querySelector('.playerDraws').innerText = value[1].draws;
