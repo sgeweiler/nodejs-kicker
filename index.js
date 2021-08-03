@@ -78,16 +78,17 @@ io.on('connect', function (client) {
     playtime = setting.time;
     tournamentName = setting.name;
 
-    con.query("INSERT INTO settings (title, playtime, mode) VALUES (?, ?, ?)", values, function (err, result) {
+    con.query("INSERT INTO settings (title, playtime, mode) VALUES (?, ?, ?);", values, function (err, result) {
       if (err) throw err;
       console.log('Einstellungen erfolgreich gesetzt');
     });
   })
 
   client.on('playerInput', (playerData) => {
-    let values = [playerData.playerName, playerData.icon, playerData.color, playerData.group];
+    let values = [playerData.playerName, playerData.icon, playerData.color];
 
-    con.query("INSERT INTO players (name, icon, color, group) VALUES (?, ?, ?, ?)", values, function (err, result) {
+    con.query("INSERT INTO players (name, icon, color) VALUES (?, ?, ?);", values, function (err, result) {
+      /* todo: Group ergänzen in der Datenbank */
       if (err) throw err;
       console.log('Spieler erfolgreich angelegt');
       io.emit('playerDataReceived', values);
