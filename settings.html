@@ -57,7 +57,7 @@
       <td><input type="text" name="icon" placeholder="rocket"></td>
       <td><input type="color" name="color"></td>
       <td>
-        <select>
+        <select name="group-pick">
           <option selected value="1" name="group">1</option>
           <option value="2" name="group">2</option>
           <option value="3" name="group">3</option>
@@ -128,7 +128,7 @@ Ungefähre Idee wie das funktionieren soll... 🦈
     let playerName = playerForm.get('playerName');
     let icon = playerForm.get('icon');
     let color = playerForm.get('color');
-    let group = playerForm.get('group');
+    let group = playerForm.get('group-pick');
 
     console.log(playerName, icon, color, group)
 
