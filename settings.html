@@ -142,7 +142,10 @@ Ungefähre Idee wie das funktionieren soll... 🦈
     console.log('Settings connected');
 
     socket.on('playerDataReceived', function (values){
-      console.log(values);
+      for (const value of Object.entries(values)){
+        console.log(value);
+      }
+      /*console.log(values);*/
     })
   });
 </script>
