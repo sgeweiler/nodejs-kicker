@@ -8,6 +8,8 @@ const io = require('socket.io')(server);
 let lastGoal = 0;
 let goalCountOne = 0;
 let goalCountTwo = 0;
+let gameIsRunning = false;
+
 const { exec } = require('child_process')
 
 /* Einstellungen für die Spielzeit aus der Datenbank holen */
@@ -106,7 +108,7 @@ io.on('connect', function (client) {
 
 server.listen(2301);
 
-function sendPlayerData(){
+function sendPlayerData() {
   con.query("SELECT id, name, icon, color FROM players;", function (err, result, fields) {
     if (err) throw err;
   })
@@ -131,6 +133,7 @@ function getDataFromDatabase() {
 function startGame() {
   io.emit('startGame');
   io.emit('countdown', playtime)
+  gameIsRunning = true;
 
   let intervall = setInterval(function () {
     playtime--;
@@ -147,6 +150,7 @@ function startGame() {
 
     if (playtime <= 0) {
       console.log("Spiel zu Ende");
+      gameIsRunning = false;
       clearInterval(intervall);
     }
   }, 1000)
@@ -172,8 +176,10 @@ if (os.platform() === 'linux') {
     if (value === 0 || Date.now() - 4000 < lastGoal)
       return
     lastGoal = Date.now()
-    goalCountOne++
-    updateGoal(goalCountOne);
+    if (gameIsRunning) {
+      goalCountOne++
+      updateGoal(goalCountOne);
+    }
     console.log(goalCountOne);
   });
 
@@ -183,8 +189,10 @@ if (os.platform() === 'linux') {
     if (value === 0 || Date.now() - 4000 < lastGoal)
       return
     lastGoal = Date.now()
-    goalCountTwo++
-    updateGoal(goalCountTwo);
+    if (gameIsRunning) {
+      goalCountTwo++
+      updateGoal(goalCountTwo);
+    }
     console.log(goalCountTwo);
   });
 
@@ -197,8 +205,10 @@ if (os.platform() === 'linux') {
 
     if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
-      goalCountOne++
-      updateGoal(goalCountOne);
+      if (gameIsRunning) {
+        goalCountOne++
+        updateGoal(goalCountOne);
+      }
       console.log(goalCountOne);
     }
   });
@@ -212,8 +222,10 @@ if (os.platform() === 'linux') {
 
     if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
-      goalCountTwo++
-      updateGoal(goalCountTwo);
+      if (gameIsRunning) {
+        goalCountTwo++
+        updateGoal(goalCountTwo);
+      }
       console.log(goalCountTwo);
     }
   });
@@ -227,8 +239,10 @@ if (os.platform() === 'linux') {
 
     if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
-      goalCountOne--
-      updateGoal(goalCountOne);
+      if (gameIsRunning) {
+        goalCountOne--
+        updateGoal(goalCountOne);
+      }
       console.log(goalCountOne);
     }
   });
@@ -242,12 +256,13 @@ if (os.platform() === 'linux') {
 
     if (value === 0 && ControlDate != null && ControlDate + 2000 < Date.now()) {
       ControlDate = null;
-      goalCountTwo--
-      updateGoal(goalCountTwo);
+      if (gameIsRunning) {
+        goalCountTwo--
+        updateGoal(goalCountTwo);
+      }
       console.log(goalCountTwo);
     }
   });
-
 
   function unexportOnClose() {
     PhotoDiodeOne.unexport();
