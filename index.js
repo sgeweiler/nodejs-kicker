@@ -14,6 +14,7 @@ const { exec } = require('child_process')
 
 /*
 * todo: -Mode 1vs1. gameIsRunning true, until score = 10
+*  todo: Countdown fixen...
 * todo: Spielplan irgendwie generieren. Ligasystem: Spieler nehmen und in Variablen schreiben, dann for each Spieler mit jedem Anderen bis auf sich selbst ein String mit dem SQL Insert erzeugen, Inserten
 * */
 
