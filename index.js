@@ -46,7 +46,7 @@ io.on('connect', function (client) {
 
   con.query("SELECT title FROM settings", function (err, result, fields) {
     if (err) throw err;
-    // Nochmal überdenken ...
+    // todo: Nochmal überdenken ...
     let tournamentTitle = result[1].title;
 
     io.emit('initialCountdown', playtime, tournamentTitle);
@@ -91,7 +91,6 @@ io.on('connect', function (client) {
       /* todo: Group ergänzen in der Datenbank */
       if (err) throw err;
       console.log('Spieler erfolgreich angelegt');
-      io.emit('playerDataReceived', values);
     })
   })
 
@@ -100,6 +99,12 @@ io.on('connect', function (client) {
 });
 
 server.listen(2301);
+
+function sendPlayerData(){
+  con.query("SELECT id, name, icon, color FROM players;", function (err, result, fields) {
+    if (err) throw err;
+  })
+}
 
 function updateGoal() {
   io.emit('goalCount', { goalCountOne, goalCountTwo });
@@ -112,7 +117,8 @@ function updateGoal() {
 
 function getDataFromDatabase() {
   con.query("SELECT * FROM players", function (err, result, fields) {
-
+    console.log(result);
+    io.emit('playerDataReceived');
   })
 }
 
