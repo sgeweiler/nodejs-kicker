@@ -13,7 +13,7 @@ let gameIsRunning = false;
 const { exec } = require('child_process')
 
 /* Einstellungen für die Spielzeit aus der Datenbank holen */
-let playtime = 120;
+let playtime;
 let tournamentName = "Titel des Turniers";
 
 let mysql = require('mysql');
