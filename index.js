@@ -43,7 +43,7 @@ app.get('/settings', function (req, res, next) {
 
 io.on('connect', function (client) {
   console.log('Client connected.')
-  
+
   con.query("SELECT title FROM settings", function (err, result, fields) {
     if (err) throw err;
     // Nochmal überdenken ...
@@ -73,7 +73,7 @@ io.on('connect', function (client) {
   })
 
   client.on('settings', (setting) => {
-    let values = [setting.name, setting.time, setting.mode]
+    let values = [setting.name, setting.time, setting.mode];
 
     playtime = setting.time;
     tournamentName = setting.name;
@@ -82,6 +82,16 @@ io.on('connect', function (client) {
       if (err) throw err;
       console.log('Einstellungen erfolgreich gesetzt');
     });
+  })
+
+  client.on('playerInput', (playerData) => {
+    let values = [playerData.playerName, playerData.icon, playerData.color, playerData.group];
+
+    con.query("INSERT INTO players (name, icon, color, group)", values, function (err, result) {
+      if (err) throw err;
+      console.log('Spieler erfolgreich angelegt');
+      io.emit('playerDataReceived', values);
+    })
   })
 
   updateGoal();

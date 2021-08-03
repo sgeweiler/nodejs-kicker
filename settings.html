@@ -130,13 +130,17 @@ Ungefähre Idee wie das funktionieren soll... 🦈
     let color = playerForm.get('color');
     let group = playerForm.get('group-pick');
 
-    console.log(playerName, icon, color, group)
+    console.log(playerName, icon, color, group);
 
-    socket.emit('playerInput', { p: playerName, i: icon, c: color, g: group })
+    socket.emit('playerInput', { playerName: playerName, icon: icon, color: color, group: group });
   }
 
   socket.on('connect', function (data) {
     console.log('Settings connected');
+
+    socket.on('playerDataReceived', function (values){
+      console.log(values);
+    })
   });
 </script>
 </html>
