@@ -87,7 +87,7 @@ io.on('connect', function (client) {
   client.on('playerInput', (playerData) => {
     let values = [playerData.playerName, playerData.icon, playerData.color];
 
-    con.query("INSERT INTO players (name, icon, color) VALUES (?, ?, ?);", values, function (err, result) {
+    con.query("INSERT INTO players (name, icon, color, wins, draws, defeat, goals, countergoals, score, games, crank) VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0);", values, function (err, result) {
       /* todo: Group ergänzen in der Datenbank */
       if (err) throw err;
       console.log('Spieler erfolgreich angelegt');
