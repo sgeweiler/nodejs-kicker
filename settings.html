@@ -70,8 +70,18 @@
   </tr>
   </tbody>
   <tbody id="playerData">
-
   </tbody>
+  <template id="playerEntries">
+    <tr>
+      <td class="delete"></td>
+      <td class="number"></td>
+      <td class="icon"></td>
+      <td class="name"></td>
+      <td class="icon-name"></td>
+      <td class="color"></td>
+      <td class="group"></td>
+    </tr>
+  </template>
 </table>
 <!--
 
@@ -144,33 +154,21 @@ Ungefähre Idee wie das funktionieren soll... 🦈
     socket.on('playerDataReceived', function (values) {
 
       let playerDataTable = document.getElementById('playerData');
+      playerDataTable.innerHTML = '';
+
+      let template = document.querySelector('#playerEntries');
+
       for (const value of Object.entries(values)) {
-        let tr = document.createElement("tr");
-        playerDataTable.appendChild(tr);
+        template.content.querySelector('.delete').innerText = "BUTTON";
+        template.content.querySelector('.number').innerText = value[1].id;
+        template.content.querySelector('.icon').innerText = "ICON";
+        template.content.querySelector('.name').innerText = value[1].name;
+        template.content.querySelector('.icon-name').innerText = value[1].icon;
+        template.content.querySelector('.color').innerText = value[1].color;
+        template.content.querySelector('.group').innerText = "GROUP";
 
-        let firstTableCell = document.createElement("td");
-        let secondTableCell = document.createElement("td");
-        let thirdTableCell = document.createElement("td");
-        let fourthTableCell = document.createElement("td");
-        let fifthTableCell = document.createElement("td");
-        let sixthTableCell = document.createElement("td");
-        let seventhTableCell = document.createElement("td");
-
-        firstTableCell.innerHTML = '<button></button>';
-        secondTableCell.innerText = value[1].id;
-        thirdTableCell.innerText = "Iconiersezien";
-        fourthTableCell.innerText = value[1].name;
-        fifthTableCell.innerHTML = value[1].icon;
-        sixthTableCell.innerHTML = value[1].color;
-        seventhTableCell.innerText = "Gruppe";
-
-        tr.appendChild(firstTableCell);
-        tr.appendChild(secondTableCell);
-        tr.appendChild(thirdTableCell);
-        tr.appendChild(fourthTableCell);
-        tr.appendChild(fifthTableCell);
-        tr.appendChild(sixthTableCell);
-        tr.appendChild(seventhTableCell);
+        let clone = document.importNode(template.content, true);
+        playerDataTable.appendChild(clone);
 
         console.log(value[1].id);
         console.log(value[1].name);
