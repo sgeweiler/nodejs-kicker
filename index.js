@@ -138,7 +138,6 @@ function startGame() {
   let intervall = setInterval(function () {
     playtime--;
     io.emit('countdown', playtime)
-    console.log(playtime);
 
     if (playtime === 10) {
       io.emit('tenSeconds')

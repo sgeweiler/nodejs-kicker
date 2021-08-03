@@ -121,7 +121,6 @@
 
       let playerDataTable = document.getElementById('playerFullEntries');
       let template = document.querySelector('#playerFullEntries');
-      console.log(template);
       for (const value of Object.entries(values)){
         template.content.querySelector('.playerName').innerText = value[1].name;
         template.content.querySelector('.playerWins').innerText = value[1].wins;
