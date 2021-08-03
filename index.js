@@ -87,7 +87,7 @@ io.on('connect', function (client) {
   client.on('playerInput', (playerData) => {
     let values = [playerData.playerName, playerData.icon, playerData.color, playerData.group];
 
-    con.query("INSERT INTO players (name, icon, color, group)", values, function (err, result) {
+    con.query("INSERT INTO players (name, icon, color, group) VALUES (?, ?, ?, ?)", values, function (err, result) {
       if (err) throw err;
       console.log('Spieler erfolgreich angelegt');
       io.emit('playerDataReceived', values);
