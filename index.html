@@ -44,16 +44,13 @@
 
   socket.on('connect', function (data) {
 
-    socket.on('initialCountdown', function (playtime) {
+    socket.on('initialCountdown', function (playtime, tournamentName) {
       let minutes = Math.floor(playtime / 60);
       let seconds = playtime - minutes * 60;
       if (seconds < 10)
         document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
       else
         document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
-    })
-
-    socket.on('settingsSet', function (playtime, tournamentName) {
       document.getElementById('tournamentName').innerHTML = tournamentName;
     })
 
