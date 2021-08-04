@@ -168,6 +168,11 @@ Ungefähre Idee wie das funktionieren soll... 🦈
         playerDataTable.appendChild(clone);
 
       }
+    });
+
+    socket.on('initialCountdown', function (playtime, tournamentTitle) {
+      document.getElementById('tournamentName').value = tournamentTitle;
+      document.getElementById('playtime').value = playtime;
     })
   });
 </script>
