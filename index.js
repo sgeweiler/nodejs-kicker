@@ -8,7 +8,8 @@ const io = require('socket.io')(server);
 let lastGoal = 0;
 let goalCountOne = 0;
 let goalCountTwo = 0;
-let gameIsRunning = false;
+//let gameIsRunning = false;
+let gameIsRunning = true;
 
 const { exec } = require('child_process')
 
@@ -155,7 +156,9 @@ function startGame() {
 
     if (playtime <= 0) {
       console.log("Spiel zu Ende");
-      gameIsRunning = false;
+      /* Spiel bis 10 */
+      gameIsRunning = true;
+      //gameIsRunning = false;
       clearInterval(intervall);
     }
   }, 1000)
