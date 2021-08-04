@@ -155,7 +155,9 @@ function startGame() {
 
     if (playtime <= 0) {
       console.log("Spiel zu Ende");
-      gameIsRunning = false;
+      /* Spiel bis 10 */
+      gameIsRunning = true;
+      //gameIsRunning = false;
       clearInterval(intervall);
     }
   }, 1000)
