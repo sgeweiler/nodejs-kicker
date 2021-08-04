@@ -8,7 +8,8 @@ const io = require('socket.io')(server);
 let lastGoal = 0;
 let goalCountOne = 0;
 let goalCountTwo = 0;
-let gameIsRunning = false;
+//let gameIsRunning = false;
+let gameIsRunning = true;
 
 const { exec } = require('child_process')
 
