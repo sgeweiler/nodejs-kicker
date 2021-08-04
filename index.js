@@ -8,8 +8,8 @@ const io = require('socket.io')(server);
 let lastGoal = 0;
 let goalCountOne = 0;
 let goalCountTwo = 0;
-//let gameIsRunning = false;
-let gameIsRunning = true;
+let gameIsRunning = false;
+// let gameIsRunning = true; todo: Falls 1vs1 wieder einkommentieren
 
 const { exec } = require('child_process')
 
@@ -53,9 +53,8 @@ app.get('/settings', function (req, res, next) {
 io.on('connect', function (client) {
   console.log('Client connected.')
 
-  con.query("SELECT title, playtime FROM settings", function (err, result, fields) {
+  con.query("SELECT title, playtime FROM settings WHERE id = (SELECT max(id) FROM settings)", function (err, result, fields) {
     if (err) throw err;
-    // todo: Nochmal überdenken ...
     let tournamentTitle = result[0].title;
     let playtime = result[0].playtime;
 
