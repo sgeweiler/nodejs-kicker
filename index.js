@@ -11,6 +11,8 @@ let goalCountTwo = 0;
 let gameIsRunning = false;
 // let gameIsRunning = true; todo: Falls 1vs1 wieder einkommentieren
 
+const isPaused = false;
+
 const { exec } = require('child_process')
 
 /*
@@ -50,8 +52,15 @@ app.get('/settings', function (req, res, next) {
   res.sendFile(__dirname + '/settings.html')
 });
 
+/* Debug */
+generateGameplanRoundRobin();
+
 io.on('connect', function (client) {
   console.log('Client connected.')
+
+  client.on('generateGameplan', () => {
+    generateGameplanRoundRobin();
+  })
 
   con.query("SELECT title, playtime FROM settings WHERE id = (SELECT max(id) FROM settings)", function (err, result, fields) {
     if (err) throw err;
@@ -84,6 +93,9 @@ io.on('connect', function (client) {
 
   client.on('start', () => {
     startGame();
+    client.on('pause', () => {
+      const isPaused = true
+    })
   })
 
   client.on('settings', (setting) => {
@@ -110,6 +122,7 @@ io.on('connect', function (client) {
 
   updateGoal();
   getDataFromDatabase();
+  getGamePlanFromDatabase();
 });
 
 server.listen(2301);
@@ -136,31 +149,167 @@ function getDataFromDatabase() {
   })
 }
 
+function getGamePlanFromDatabase(){
+  con.query("SELECT * FROM gameplan", function (err, result) {
+    if (err) throw err;
+    io.emit('gamePlanRequested', result);
+  })
+}
+
 function startGame() {
   io.emit('startGame');
-  io.emit('countdown', playtime)
   gameIsRunning = true;
+  let playtime;
+
+  con.query("SELECT playtime FROM settings WHERE id = (SELECT max(id) FROM settings)", function (err, result, fields) {
+    if (err) throw err;
+    playtime = result[0].playtime;
+  });
 
   let intervall = setInterval(function () {
-    playtime--;
-    io.emit('countdown', playtime)
+    /*console.log(isPaused);*/
 
-    if (playtime === 10) {
-      io.emit('tenSeconds')
-    }
+    if (!isPaused) {
+      playtime--;
+      io.emit('countdown', playtime)
 
-    if (playtime === 30) {
-      io.emit('thirtySeconds')
-    }
+      if (playtime === 10) {
+        io.emit('tenSeconds')
+      }
 
-    if (playtime <= 0) {
-      console.log("Spiel zu Ende");
-      /* Spiel bis 10 */
-      gameIsRunning = true;
-      //gameIsRunning = false;
-      clearInterval(intervall);
+      if (playtime === 30) {
+        io.emit('thirtySeconds')
+      }
+
+      if (playtime <= 0) {
+        console.log("Spiel zu Ende");
+        /* Spiel bis 10 */
+        gameIsRunning = true;
+        //gameIsRunning = false;
+        clearInterval(intervall);
+      }
     }
   }, 1000)
+}
+
+/* Bitte nicht angucken. Danke! */
+function generateGameplanRoundRobin() {
+  con.query("DELETE FROM gameplan;");
+  con.query("ALTER TABLE gameplan AUTO_INCREMENT = 0;");
+  con.query("SELECT * FROM players;", function (err, result, fields) {
+    if (err) throw err;
+    let players = [];
+
+    for (let i = 0; i < result.length; i++) {
+      players.push(result[i].name);
+    }
+
+    /* Spielplan, wenn die Anzahl der Spieler ungerade ist */
+    if (players.length % 2 === 1) {
+      const playerCount = players.length;
+      const rounds = playerCount;
+      const half = playerCount / 2;
+
+      const tournamentPairings = [];
+
+      const playerIndexes = players.map((_, i) => i).slice();
+
+      for (let round = 0; round < rounds; round++) {
+        const roundPairings = [];
+        const newPlayerIndexes = [round].concat(playerIndexes);
+
+        const firstHalf = newPlayerIndexes.slice(0, half);
+        const secondHalf = newPlayerIndexes.slice(half, playerCount - 1).reverse();
+
+        //console.log(firstHalf);
+        //console.log(secondHalf);
+
+        for (let i = 0; i < firstHalf.length; i++) {
+          roundPairings.push({
+            a: players[firstHalf[i]],
+            b: players[secondHalf[i]],
+          })
+        }
+
+        playerIndexes.push(playerIndexes.shift());
+        tournamentPairings.push(roundPairings);
+      }
+
+      /* Hinrunde */
+      for (let i = 0; i < tournamentPairings.length; i++) {
+        tournamentPairings[i].forEach(({ a, b }) => {
+          let values = [a, b];
+          con.query("INSERT INTO gameplan (first_team, second_team) VALUES (?, ?);", values, function (err, result) {
+            if (err) throw err;
+            /* Debuglog: console.log(`${a} gegen ${b} für die Hinrunde eingetragen.`);*/
+          });
+        });
+      }
+
+      /* Rückrunde */
+      tournamentPairings.reverse();
+      for (let k = 0; k < tournamentPairings.length; k++) {
+        tournamentPairings[k].forEach(({ a, b }) => {
+          let values = [a, b];
+          con.query("INSERT INTO gameplan (first_team, second_team) VALUES (?, ?);", values, function (err, result) {
+            if (err) throw err;
+            /* Debuglog: console.log(`${a} gegen ${b} für die Rückrunde eingetragen.`);*/
+          });
+        })
+      }
+    } else {
+
+      const playerCount = players.length;
+      const rounds = playerCount - 1;
+      const half = playerCount / 2;
+
+      const tournamentPairings = [];
+
+      const playerIndexes = players.map((_, i) => i).slice(1);
+
+      for (let round = 0; round < rounds; round++) {
+        const roundPairings = [];
+
+        const newPlayerIndexes = [0].concat(playerIndexes);
+
+        const firstHalf = newPlayerIndexes.slice(0, half);
+        const secondHalf = newPlayerIndexes.slice(half, playerCount).reverse();
+
+        for (let i = 0; i < firstHalf.length; i++) {
+          roundPairings.push({
+            a: players[firstHalf[i]],
+            b: players[secondHalf[i]],
+          })
+        }
+
+        playerIndexes.push(playerIndexes.shift());
+        tournamentPairings.push(roundPairings);
+      }
+
+      /* Hinrunde */
+      for (let i = 0; i < tournamentPairings.length; i++) {
+        tournamentPairings[i].forEach(({ a, b }) => {
+          let values = [a, b];
+          con.query("INSERT INTO gameplan (first_team, second_team) VALUES (?, ?);", values, function (err, result) {
+            if (err) throw err;
+            /* Debuglog: console.log(`${a} gegen ${b} für die Hinrunde eingetragen.`);*/
+          });
+        });
+      }
+
+      /* Rückrunde */
+      tournamentPairings.reverse();
+      for (let k = 0; k < tournamentPairings.length; k++) {
+        tournamentPairings[k].forEach(({ a, b }) => {
+          let values = [a, b];
+          con.query("INSERT INTO gameplan (first_team, second_team) VALUES (?, ?);", values, function (err, result) {
+            if (err) throw err;
+            /* Debuglog: console.log(`${a} gegen ${b} für die Rückrunde eingetragen.`);*/
+          });
+        })
+      }
+    }
+  })
 }
 
 if (os.platform() === 'linux') {
@@ -274,6 +423,10 @@ if (os.platform() === 'linux') {
   function unexportOnClose() {
     PhotoDiodeOne.unexport();
     PhotoDiodeTwo.unexport();
+    CorrectButtonGreenOne.unexport();
+    CorrectButtonRedOne.unexport();
+    CorrectButtonGreenTwo.unexport();
+    CorrectButtonGreenTwo.unexport();
   }
 
   process.on('SIGINT', unexportOnClose);
