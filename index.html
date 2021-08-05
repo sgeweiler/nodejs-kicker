@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>nodejs-tablesoccer-project</title>
+  <title id="pageTitle">nodejs-tablesoccer-project</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -93,6 +93,7 @@
       else
         document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
       document.getElementById('tournamentName').innerHTML = tournamentName;
+      document.getElementById('pageTitle').innerHTML = tournamentName;
     })
 
     socket.on('startGame', function (data) {
