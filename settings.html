@@ -84,44 +84,15 @@
   </template>
 </table>
 <button onclick="window.location.reload();">Reload</button>
-<!--
-
-Plan: Formularfelder in die Datenbank übertragen
-Anhand der Menge der Teams/Spieler soll dann die Erstellung des Turnierplans modular erfolgen.
-
-Die Spielplan Tabelle soll kopiert werden und mit dem prefix des aktuellen Datums gespeichert werden. In Ebendieser passiert der Rest.
-(20210810-gameplan)
-
-Ligamodus
-Beispielhaft für (6) Teams/Spieler
-Hinspiel    Rückspiel
-[a | b]     [a | b]
-[a | c]     [a | c]
-[a | d]     [a | d]
-[a | e]     [a | e]
-[a | f]     [a | f]
-[b | c]     [b | c]
-[b | d]     [b | d]
-[b | e]     [b | e]
-[b | f]     [b | f]
-[c | d]     [c | d]
-[c | e]     [c | e]
-[c | f]     [c | f]
-[d | e]     [d | e]
-[d | f]     [d | f]
-[e | f]     [e | f]
-
-Die Liste der Spiele soll dann geshuffelt werden und so random erscheinen.
-
-Ungefähre Idee wie das funktionieren soll... 🦈
-
--->
+<button id="generateGameplan">Spielplan erstellen</button>
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
   const socket = io();
   let settingForm = document.getElementById('settings');
   settingForm.addEventListener('submit', getSettingSubmit);
+
+  document.getElementById('generateGameplan').addEventListener('click', () => confirm('Spielplan erstellen') && socket.emit('generateGameplay'));
 
   function getSettingSubmit(event) {
     event.preventDefault();

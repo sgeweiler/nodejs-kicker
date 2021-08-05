@@ -24,6 +24,7 @@
   </div>
   <button id="reset">Spielstand zurücksetzen</button>
   <button id="start">Spiel starten</button>
+  <!--<button id="pause">Spiel pausieren</button>-->
   <div style="width: 100%">
     <div style="font-size: 70px">
       <p id="countdown"></p>
@@ -141,7 +142,11 @@
         let clone = document.importNode(template.content, true);
         playerStatsTable.appendChild(clone);
       }
-    })
+    });
+
+    socket.on('gamePlanRequested', function (games) {
+      console.log(games);
+    });
   });
 
   document.getElementById('plus1').addEventListener('click', () => socket.emit('correctionOne', 1));
@@ -150,5 +155,7 @@
   document.getElementById('minus2').addEventListener('click', () => socket.emit('correctionTwo', -1));
   document.getElementById('reset').addEventListener('click', () => confirm('Zurücksetzen bestätigen') && socket.emit('reset'));
   document.getElementById('start').addEventListener('click', () => socket.emit('start'));
+  //document.getElementById('pause').addEventListener('click', () => socket.emit('pause'));
+
 </script>
 </html>
