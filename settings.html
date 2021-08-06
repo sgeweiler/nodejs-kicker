@@ -1,150 +1,155 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Kicker-Ronny</title>
-  <link rel="stylesheet" href="app.css">
+    <meta charset="UTF-8">
+    <title>Kicker-Ronny</title>
+    <link rel="stylesheet" href="app.css">
 </head>
 <body>
 <h2>Grundeinstellungen</h2>
 <form id="settings" name="settings">
-  <label for="tournamentName"></label>
-  <input type="text" name="tournamentName" id="tournamentName">
-  <br><br>
-  <label for="playtime"></label>
-  <input type="number" name="playtime" id="playtime">
-  <br><br>
-  <div>
+    <label for="tournamentName"></label>
+    <input type="text" name="tournamentName" id="tournamentName">
+    <br><br>
+    <label for="playtime"></label>
+    <input type="number" name="playtime" id="playtime">
+    <br><br>
     <div>
-      <input type="radio" id="1" name="modus" value="1"
-             checked>
-      <label for="1">Turniermodus A</label>
+        <div>
+            <input type="radio" id="1" name="modus" value="1"
+                   checked>
+            <label for="1">Turniermodus A</label>
+        </div>
+        <div>
+            <input type="radio" id="2" name="modus" value="2">
+            <label for="2">Turniermodus B</label>
+        </div>
+        <div>
+            <input type="radio" id="3" name="modus" value="3">
+            <label for="3">Ligamodus</label>
+        </div>
     </div>
-    <div>
-      <input type="radio" id="2" name="modus" value="2">
-      <label for="2">Turniermodus B</label>
-    </div>
-    <div>
-      <input type="radio" id="3" name="modus" value="3">
-      <label for="3">Ligamodus</label>
-    </div>
-  </div>
-  <button type="submit" id="saveSettings" onclick="window.history.back();">Speichern</button>
+    <button type="submit" id="saveSettings" onclick="window.history.back();">Speichern</button>
 </form>
 <hr>
 <!-- Output aus der Datenbank der Spieler -->
 <h2>Team-Einstellungen</h2>
 <table>
-  <thead>
-  <tr>
-    <td>Löschen</td>
-    <td>#</td>
-    <td></td>
-    <td>Name</td>
-    <td>Icon</td>
-    <td>Farbe</td>
-    <td>Gruppe</td>
-    <td></td>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <form id="players" name="players">
-      <td></td>
-      <td>Nummer</td>
-      <td>🚀</td>
-      <td><input type="text" name="playerName" placeholder="Name des Spielers"></td>
-      <td><input type="text" name="icon" placeholder="rocket"></td>
-      <td><input type="color" name="color"></td>
-      <td>
-        <select name="group-pick">
-          <option selected value="1" name="group">1</option>
-          <option value="2" name="group">2</option>
-          <option value="3" name="group">3</option>
-        </select>
-      </td>
-      <td>
-        <button type="submit" id="savePlayers">Speichern</button>
-      </td>
-    </form>
-  </tr>
-  </tbody>
-  <tbody id="playerData">
-  </tbody>
-  <template id="playerEntries">
+    <thead>
     <tr>
-      <td class="delete"></td>
-      <td class="number"></td>
-      <td class="icon"></td>
-      <td class="name"></td>
-      <td class="icon-name"></td>
-      <td class="color"></td>
-      <td class="group"></td>
+        <td>Löschen</td>
+        <td>#</td>
+        <td></td>
+        <td>Name</td>
+        <td>Icon</td>
+        <td>Farbe</td>
+        <td>Gruppe</td>
+        <td></td>
     </tr>
-  </template>
+    </thead>
+    <tbody>
+    <tr>
+        <form id="players" name="players">
+            <td></td>
+            <td></td>
+            <td>🚀</td>
+            <td><input type="text" name="playerName" placeholder="Name des Spielers"></td>
+            <td><input type="text" name="icon" placeholder="rocket"></td>
+            <td><input type="color" name="color"></td>
+            <td>
+                <select name="group-pick">
+                    <option selected value="1" name="group">1</option>
+                    <option value="2" name="group">2</option>
+                    <option value="3" name="group">3</option>
+                </select>
+            </td>
+            <td>
+                <button type="submit" id="savePlayers">Speichern</button>
+            </td>
+        </form>
+    </tr>
+    </tbody>
+    <tbody id="playerData">
+    </tbody>
+    <template id="playerEntries">
+        <tr>
+            <td><button class="deleteBtn"></button></td>
+            <td class="number"></td>
+            <td class="icon"></td>
+            <td class="name"></td>
+            <td class="icon-name"></td>
+            <td class="color"></td>
+            <td class="group"></td>
+        </tr>
+    </template>
 </table>
-<button onclick="window.location.reload();">Reload</button>
-<button id="generateGameplan">Spielplan erstellen</button>
+<div>
+    <button onclick="window.location.reload();">Reload</button>
+    <button onclick="window.history.back();">Zurück zur Startseite</button>
+    <button id="generateGameplan">Spielplan erstellen</button>
+</div>
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  const socket = io();
-  let settingForm = document.getElementById('settings');
-  settingForm.addEventListener('submit', getSettingSubmit);
+    const socket = io();
+    let settingForm = document.getElementById('settings');
+    settingForm.addEventListener('submit', getSettingSubmit);
 
-  document.getElementById('generateGameplan').addEventListener('click', () => confirm('Spielplan erstellen') && socket.emit('generateGameplay'));
+    document.getElementById('generateGameplan').addEventListener('click', () => confirm('Spielplan erstellen') && socket.emit('generateGameplan'));
 
-  function getSettingSubmit(event) {
-    event.preventDefault();
-    let settingForm = new FormData(document.getElementById('settings'));
-    let tournamentName = settingForm.get('tournamentName');
-    let playTime = settingForm.get('playtime');
-    let gameMode = settingForm.get('modus');
+    function getSettingSubmit(event) {
+        event.preventDefault();
+        let settingForm = new FormData(document.getElementById('settings'));
+        let tournamentName = settingForm.get('tournamentName');
+        let playTime = settingForm.get('playtime');
+        let gameMode = settingForm.get('modus');
 
-    socket.emit('settings', { name: tournamentName, time: playTime, mode: gameMode });
-  }
+        socket.emit('settings', {name: tournamentName, time: playTime, mode: gameMode});
+    }
 
-  let playersForm = document.getElementById('players');
-  playersForm.addEventListener('submit', getPlayersSubmit);
+    let playersForm = document.getElementById('players');
+    playersForm.addEventListener('submit', getPlayersSubmit);
 
-  function getPlayersSubmit(event) {
-    event.preventDefault();
-    let playerForm = new FormData(document.getElementById('players'));
-    let playerName = playerForm.get('playerName');
-    let icon = playerForm.get('icon');
-    let color = playerForm.get('color');
-    let group = playerForm.get('group-pick');
+    function getPlayersSubmit(event) {
+        event.preventDefault();
+        let playerForm = new FormData(document.getElementById('players'));
+        let playerName = playerForm.get('playerName');
+        let icon = playerForm.get('icon');
+        let color = playerForm.get('color');
+        let group = playerForm.get('group-pick');
 
-    socket.emit('playerInput', { playerName: playerName, icon: icon, color: color, group: group });
-  }
+        socket.emit('playerInput', {playerName: playerName, icon: icon, color: color, group: group});
+    }
 
-  socket.on('connect', function (data) {
-    socket.on('playerDataReceived', function (values) {
+    socket.on('connect', function (data) {
+        socket.on('playerDataReceived', function (values) {
 
-      let playerDataTable = document.getElementById('playerData');
-      playerDataTable.innerHTML = '';
+            let playerDataTable = document.getElementById('playerData');
+            playerDataTable.innerHTML = '';
 
-      let template = document.querySelector('#playerEntries');
+            let template = document.querySelector('#playerEntries');
 
-      for (const value of Object.entries(values)) {
-        template.content.querySelector('.delete').innerText = "BUTTON";
-        template.content.querySelector('.number').innerText = value[1].id;
-        template.content.querySelector('.icon').innerText = "ICON";
-        template.content.querySelector('.name').innerText = value[1].name;
-        template.content.querySelector('.icon-name').innerText = value[1].icon;
-        template.content.querySelector('.color').innerText = value[1].color;
-        template.content.querySelector('.group').innerText = "GROUP";
+            for (const value of Object.entries(values)) {
+                template.content.querySelector('.deleteBtn').innerText = "\\_/";
+                template.content.querySelector('.deleteBtn').id = value[1].name;
+                template.content.querySelector('.number').innerText = value[1].id;
+                template.content.querySelector('.icon').innerText = "Icon";
+                template.content.querySelector('.name').innerText = value[1].name;
+                template.content.querySelector('.icon-name').innerText = value[1].icon;
+                template.content.querySelector('.color').innerText = value[1].color;
+                template.content.querySelector('.group').innerText = "Gruppe";
 
-        let clone = document.importNode(template.content, true);
-        playerDataTable.appendChild(clone);
+                let clone = document.importNode(template.content, true);
+                playerDataTable.appendChild(clone);
 
-      }
+                document.getElementById(value[1].name).addEventListener('click', () => confirm(value[1].name + ' wirklich löschen?') && socket.emit('playerDelete', value[1].name));
+            }
+        });
+
+        socket.on('initialCountdown', function (playtime, tournamentTitle) {
+            document.getElementById('tournamentName').value = tournamentTitle;
+            document.getElementById('playtime').value = playtime;
+        })
     });
-
-    socket.on('initialCountdown', function (playtime, tournamentTitle) {
-      document.getElementById('tournamentName').value = tournamentTitle;
-      document.getElementById('playtime').value = playtime;
-    })
-  });
 </script>
 </html>

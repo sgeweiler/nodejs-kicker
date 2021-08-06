@@ -1,162 +1,211 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title id="pageTitle">nodejs-tablesoccer-project</title>
-  <link rel="stylesheet" href="app.css">
+    <meta charset="UTF-8">
+    <title id="pageTitle">nodejs-tablesoccer-project</title>
+    <link rel="stylesheet" href="app.css">
 </head>
 <body>
 <h1 id="tournamentName">Tischkicker Node.js Projekt</h1>
 <div style="width: 100%; height: 400px">
-  <div style="float: left; padding: 100px; margin-top: 75px">
-    <button id="plus1">+</button>
-    <button id="minus1">-</button>
-  </div>
-  <div style="float: left; padding: 100px; font-size: 60px">
-    <p id="GC-1">0</p>
-  </div>
-  <div style="float: left; padding: 100px; font-size: 60px">
-    <p id="GC-2">0</p>
-  </div>
-  <div style="float: left; padding: 100px; margin-top: 75px">
-    <button id="plus2">+</button>
-    <button id="minus2">-</button>
-  </div>
-  <button id="reset">Spielstand zurücksetzen</button>
-  <button id="start">Spiel starten</button>
-  <!--<button id="pause">Spiel pausieren</button>-->
-  <div style="width: 100%">
-    <div style="font-size: 70px">
-      <p id="countdown"></p>
+    <div style="float: left; padding: 100px; margin-top: 75px">
+        <button id="plus1">+</button>
+        <button id="minus1">-</button>
     </div>
-  </div>
+    <div style="float: left; padding: 100px; font-size: 60px">
+        <p id="GC-1">0</p>
+        <p id="playerOne"></p>
+    </div>
+    <div style="float: left; padding: 100px; font-size: 60px">
+        <p id="GC-2">0</p>
+        <p id="playerTwo"></p>
+    </div>
+    <div style="float: left; padding: 100px; margin-top: 75px">
+        <button id="plus2">+</button>
+        <button id="minus2">-</button>
+    </div>
+    <button id="reset">Spielstand zurücksetzen</button>
+    <button id="start">Spiel starten</button>
+    <!--<button id="pause">Spiel pausieren</button>-->
+    <div style="width: 100%">
+        <div style="font-size: 70px">
+            <p id="countdown"></p>
+        </div>
+    </div>
 </div>
-<hr>
 <div style="width: 100%">
-  <div style="width: 50%; height: 300px">
-    <h2>Spielertabelle</h2>
-    <table>
-      <thead>
-      <tr>
-        <td>Name</td>
-        <td>Siege</td>
-        <td>Unentschieden</td>
-        <td>Niederlagen</td>
-        <td>Tore</td>
-        <td>Gegentore</td>
-        <td>Punkte</td>
-        <td>Spiele</td>
-      </tr>
-      </thead>
-      <tbody id="playerStats">
-      </tbody>
-      <template id="playerFullEntries">
-        <tr>
-          <td class="playerName"></td>
-          <td class="playerWins"></td>
-          <td class="playerDraws"></td>
-          <td class="playerDefeat"></td>
-          <td class="playerGoals"></td>
-          <td class="playerCounterGoals"></td>
-          <td class="playerScore"></td>
-          <td class="playerGames"></td>
-        </tr>
-      </template>
-    </table>
-  </div>
-  <hr>
-  <div>
-    <h2>Spielplan</h2>
-    <p>Tja keine Ahnung wie ich den generieren soll...</p>
-  </div>
+    <div style="width: 50%; height: 300px">
+        <h2>Spielertabelle</h2>
+        <table>
+            <thead>
+            <tr>
+                <td>Name</td>
+                <td>Siege</td>
+                <td>Unentschieden</td>
+                <td>Niederlagen</td>
+                <td>Tore</td>
+                <td>Gegentore</td>
+                <td>Punkte</td>
+                <td>Spiele</td>
+            </tr>
+            </thead>
+            <tbody id="playerStats">
+            </tbody>
+            <template id="playerFullEntries">
+                <tr>
+                    <td class="playerName"></td>
+                    <td class="playerWins"></td>
+                    <td class="playerDraws"></td>
+                    <td class="playerDefeat"></td>
+                    <td class="playerGoals"></td>
+                    <td class="playerCounterGoals"></td>
+                    <td class="playerScore"></td>
+                    <td class="playerGames"></td>
+                </tr>
+            </template>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <h2>Spielplan</h2>
+        <table>
+            <thead>
+            <tr>
+                <td>Spiel</td>
+                <td>Team A</td>
+                <td>Team B</td>
+                <td>&nbsp;Tore</td>
+                <td>:</td>
+                <td>Tore&nbsp;</td>
+            </tr>
+            </thead>
+            <tbody id="fullGamePlan">
+            </tbody>
+            <template id="gamePlanEntries">
+                <tr>
+                    <td class="gameId"></td>
+                    <td class="firstTeam"></td>
+                    <td class="secondTeam"></td>
+                    <td class="firstTeamScore"></td>
+                    <td class="secondTeamScore"></td>
+                </tr>
+            </template>
+        </table>
+    </div>
 </div>
 </body>
 
 <footer>
-  <a href="/settings">Einstellungen</a>
+    <button>
+        <a href="/settings" style="text-decoration: none">Einstellungen</a>
+    </button>
 </footer>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  /* const socket = io.connect('http://localhost:2301') */
-  const socket = io();
-  const whistle = new Audio('/sounds/whistle.ogg');
-  const thirtySeconds = new Audio('/sounds/countdown-30-seconds.ogg');
-  const tenSeconds = new Audio('/sounds/countdown-1.ogg');
+    /* const socket = io.connect('http://localhost:2301') */
+    const socket = io();
+    const whistle = new Audio('/sounds/whistle.ogg');
+    const thirtySeconds = new Audio('/sounds/countdown-30-seconds.ogg');
+    const tenSeconds = new Audio('/sounds/countdown-1.ogg');
 
-  socket.on('connect', function (data) {
+    socket.on('connect', function (data) {
 
-    socket.on('initialCountdown', function (playtime, tournamentName) {
-      let minutes = Math.floor(playtime / 60);
-      let seconds = playtime - minutes * 60;
-      if (seconds < 10)
-        document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
-      else
-        document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
-      document.getElementById('tournamentName').innerHTML = tournamentName;
-      document.getElementById('pageTitle').innerHTML = tournamentName;
-    })
+        socket.on('initialCountdown', function (playtime, tournamentName) {
+            let minutes = Math.floor(playtime / 60);
+            let seconds = playtime - minutes * 60;
+            if (seconds < 10)
+                document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
+            else
+                document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
+            document.getElementById('tournamentName').innerHTML = tournamentName;
+            document.getElementById('pageTitle').innerHTML = tournamentName;
+        })
 
-    socket.on('startGame', function (data) {
-      /* Todo: Countdown 3 Seconds evtl. Alert?*/
-      whistle.play();
+        socket.on('startGame', function (data) {
+            /* Todo: Countdown 3 Seconds evtl. Alert?*/
+            whistle.play();
+        });
+
+        socket.on('countdown', function (playtime) {
+            let minutes = Math.floor(playtime / 60);
+            let seconds = playtime - minutes * 60;
+
+            if (seconds < 10)
+                document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
+            else
+                document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
+        })
+
+        socket.on('thirtySeconds', function () {
+            thirtySeconds.play();
+        })
+
+        socket.on('tenSeconds', function () {
+            tenSeconds.play();
+        })
+
+        socket.on('goalCount', function (data) {
+            document.getElementById("GC-1").innerHTML = data.goalCountOne;
+            document.getElementById("GC-2").innerHTML = data.goalCountTwo;
+        });
+
+        socket.on('endGame', function () {
+            whistle.play();
+        });
+
+        socket.on('fullPlayerStats', function (values) {
+            let playerStatsTable = document.getElementById('playerStats');
+            playerStatsTable.innerHTML = '';
+            let template = document.querySelector('#playerFullEntries');
+            for (const value of Object.entries(values)) {
+                template.content.querySelector('.playerName').innerText = value[1].name;
+                template.content.querySelector('.playerWins').innerText = value[1].wins;
+                template.content.querySelector('.playerDraws').innerText = value[1].draws;
+                template.content.querySelector('.playerDefeat').innerText = value[1].defeat;
+                template.content.querySelector('.playerGoals').innerText = value[1].goals;
+                template.content.querySelector('.playerCounterGoals').innerText = value[1].countergoals;
+                template.content.querySelector('.playerScore').innerText = value[1].score;
+                template.content.querySelector('.playerGames').innerText = value[1].games;
+
+                let clone = document.importNode(template.content, true);
+                playerStatsTable.appendChild(clone);
+            }
+        });
+
+        socket.on('gamePlanRequested', function (games) {
+            let fullGamePlan = document.getElementById('fullGamePlan');
+            fullGamePlan.innerHTML = '';
+            let planTemplate = document.querySelector('#gamePlanEntries');
+            for (const game of Object.entries(games)) {
+                planTemplate.content.querySelector('.gameId').innerText = game[1].id;
+                planTemplate.content.querySelector('.firstTeam').innerText = game[1].first_team;
+                planTemplate.content.querySelector('.secondTeam').innerText = game[1].second_team;
+                planTemplate.content.querySelector('.firstTeamScore').innerText = game[1].first_team_score;
+                planTemplate.content.querySelector('.secondTeamScore').innerText = game[1].second_team_score;
+
+                let clone = document.importNode(planTemplate.content, true);
+                fullGamePlan.appendChild(clone);
+            }
+        });
+
+        socket.on('currentGame', function (currentGame) {
+            document.getElementById('playerOne').innerText = currentGame[0].first_team;
+            document.getElementById('playerTwo').innerText = currentGame[0].second_team;
+            console.log(currentGame);
+        })
+
+        socket.on('finalScore', function (goalCountOne, goalCountTwo) {
+            console.log(goalCountOne, goalCountTwo);
+        })
     });
 
-    socket.on('countdown', function (playtime) {
-      let minutes = Math.floor(playtime / 60);
-      let seconds = playtime - minutes * 60;
-
-      if (seconds < 10)
-        document.getElementById('countdown').innerHTML = '0' + minutes + ':0' + seconds;
-      else
-        document.getElementById('countdown').innerHTML = '0' + minutes + ':' + seconds;
-    })
-
-    socket.on('thirtySeconds', function () {
-      thirtySeconds.play();
-    })
-
-    socket.on('tenSeconds', function () {
-      tenSeconds.play();
-    })
-
-    socket.on('goalCount', function (data) {
-      document.getElementById("GC-1").innerHTML = data.goalCountOne;
-      document.getElementById("GC-2").innerHTML = data.goalCountTwo;
-    });
-
-    socket.on('fullPlayerStats', function (values) {
-      let playerStatsTable = document.getElementById('playerStats');
-      playerStatsTable.innerHTML = '';
-
-      let playerDataTable = document.getElementById('playerFullEntries');
-      let template = document.querySelector('#playerFullEntries');
-      for (const value of Object.entries(values)) {
-        template.content.querySelector('.playerName').innerText = value[1].name;
-        template.content.querySelector('.playerWins').innerText = value[1].wins;
-        template.content.querySelector('.playerDraws').innerText = value[1].draws;
-        template.content.querySelector('.playerDefeat').innerText = value[1].defeat;
-        template.content.querySelector('.playerGoals').innerText = value[1].goals;
-        template.content.querySelector('.playerCounterGoals').innerText = value[1].countergoals;
-        template.content.querySelector('.playerScore').innerText = value[1].score;
-        template.content.querySelector('.playerGames').innerText = value[1].games;
-
-        let clone = document.importNode(template.content, true);
-        playerStatsTable.appendChild(clone);
-      }
-    });
-
-    socket.on('gamePlanRequested', function (games) {
-      console.log(games);
-    });
-  });
-
-  document.getElementById('plus1').addEventListener('click', () => socket.emit('correctionOne', 1));
-  document.getElementById('minus1').addEventListener('click', () => socket.emit('correctionOne', -1));
-  document.getElementById('plus2').addEventListener('click', () => socket.emit('correctionTwo', 1));
-  document.getElementById('minus2').addEventListener('click', () => socket.emit('correctionTwo', -1));
-  document.getElementById('reset').addEventListener('click', () => confirm('Zurücksetzen bestätigen') && socket.emit('reset'));
-  document.getElementById('start').addEventListener('click', () => socket.emit('start'));
-  //document.getElementById('pause').addEventListener('click', () => socket.emit('pause'));
+    document.getElementById('plus1').addEventListener('click', () => socket.emit('correctionOne', 1));
+    document.getElementById('minus1').addEventListener('click', () => socket.emit('correctionOne', -1));
+    document.getElementById('plus2').addEventListener('click', () => socket.emit('correctionTwo', 1));
+    document.getElementById('minus2').addEventListener('click', () => socket.emit('correctionTwo', -1));
+    document.getElementById('reset').addEventListener('click', () => confirm('Zurücksetzen bestätigen') && socket.emit('reset'));
+    document.getElementById('start').addEventListener('click', () => socket.emit('start'));
+    //document.getElementById('pause').addEventListener('click', () => socket.emit('pause'));
 
 </script>
 </html>
