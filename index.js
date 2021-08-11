@@ -8,7 +8,11 @@ const io = require('socket.io')(server);
 let lastGoal = 0;
 let goalCountOne = 0;
 let goalCountTwo = 0;
-let gameIsRunning = false;
+// Fürs Spiel mit Turnier
+//let gameIsRunning = false;
+
+// Für Normales ständies Zählen
+let gameIsRunning = true;
 let currentGame = 0;
 // let gameIsRunning = true; todo: Falls 1vs1 wieder einkommentieren
 
@@ -124,7 +128,6 @@ io.on('connect', function (client) {
         let values = [playerData.playerName, playerData.icon, playerData.color];
 
         con.query("INSERT INTO players (name, icon, color, wins, draws, defeat, goals, countergoals, score, games, crank) VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0);", values, function (err, result) {
-            /* todo: Group ergänzen in der Datenbank */
             if (err) throw err;
             console.log('Spieler erfolgreich angelegt');
         })
